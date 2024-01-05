@@ -13,7 +13,7 @@ const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { audio, presets } = state;
+    const { audio, signin, presets } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const [ text, setText ] = useState<string[]>([]);
@@ -25,13 +25,9 @@ const Home = () => {
     const [ endTime, setEndTime ] = useState(0);
 
     const [ showResult, setShowResult ] = useState(false);
-    const [ signin, setSignin ] = useState(false);
     
     const allowedPattern = /^[a-zA-Z0-9!,.?_\- ]$/;
 
-    const wrongTypingSound = new Audio("audio/typing2.wav");
-    
-    const typingSound = new Audio("audio/typing1.wav");
 
     const reset = () => {
         let newText: string[] = [];
@@ -76,7 +72,10 @@ const Home = () => {
         if (e.key !== text[pointer]) {
             // Wrong typing sound
             if (audio) {
-                wrongTypingSound.play();
+                if (typeof Audio !== 'undefined') {
+                    const wrongTypingSound = new Audio("/audio/typing2.wav");
+                    wrongTypingSound.play();
+                }
             }
 
             if (pointer !== errPointer) {
@@ -88,12 +87,10 @@ const Home = () => {
         }
 
         // Typing sound
-        if (audio) {
-            if (typingSound.paused) {
-                typingSound.play();
-            }
+        if (audio && typeof Audio !== 'undefined') {
+            const typingSound = new Audio("/audio/typing2.wav");
+            typingSound.play();
             
-            // wrongTypingSound.play()
         }
 
         if (pointer === text.length - 1) {
@@ -125,7 +122,7 @@ const Home = () => {
       <section>
 
         <Settings />
-
+        
           <div className="tracking-wide leading-relaxed py-2 mt-2">
               
             {

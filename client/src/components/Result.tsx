@@ -18,7 +18,6 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
     const accuracy = Math.round(((charCount - error) / charCount) * 100);
     
     const registerScore = () => {
-        dispatch({ type: "SIGNIN", payload: true });
         setShowResult(false);
     }
 

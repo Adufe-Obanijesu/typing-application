@@ -29,7 +29,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="z-10">
+        <nav className="mb-4">
             <div className="flex justify-between items-center py-2">
                 <div>
                     <FaRegKeyboard className="text-4xl" />

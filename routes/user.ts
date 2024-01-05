@@ -47,11 +47,11 @@ user.post("/signup", (req, res) => {
 
                 return res.status(200).json({ msg: "User signed up", user, token });
             })
-            .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+            .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up1", err }));
         })
-        .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+        .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up2", err }));
     })
-    .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+    .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up3", err }));
 
 });
 

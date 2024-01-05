@@ -18,7 +18,7 @@ const Settings = () => {
     const { wordNumber, difficulty, error } = state.presets;
 
     return (
-        <div className="border-b border-slate-400 py-2 flex justify-end gap-4">
+        <div className="border-b border-slate-400 py-2 flex justify-end gap-4 mb-4">
             
             <div className="flex gap-1">
                 <span>

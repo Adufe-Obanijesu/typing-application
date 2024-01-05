@@ -54,11 +54,11 @@ user.post("/signup", (req, res) => {
                 const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
                 return res.status(200).json({ msg: "User signed up", user, token });
             })
-                .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+                .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up1", err }));
         })
-            .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+            .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up2", err }));
     })
-        .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up", err }));
+        .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up3", err }));
 });
 user.post("/signin", (req, res) => {
     const { email, password, score, difficulty } = req.body;
