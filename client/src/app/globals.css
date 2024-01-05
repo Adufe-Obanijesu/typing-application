@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+  font-family: "quicksand";
+  src: url("/fonts/Quicksand-VariableFont_wght.ttf");
+}
+
+@font-face {
+  font-family: "playfair";
+  src: url("/fonts/PlayfairDisplay-VariableFont_wght.ttf");
+}
+
+.darkText {
+  @apply text-slate-300; 
+}
+
+.darkBg {
+  @apply bg-slate-900; 
+}
+
+.secondaryDarkBg {
+  @apply bg-slate-800; 
+}
+
+.lightText {
+  @apply text-slate-800;
+}
+
+.lightBg{
+  @apply bg-slate-50;
+}
+
+.secondaryLightBg{
+  @apply bg-slate-100;
+}
+
+body {
+@apply font-quicksand;
+}
+
+.transitionItem {
+  @apply transition duration-200 ease-in;
+}
+
+button {
+  @apply cursor-pointer transitionItem;
+}
+
+button, svg {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.h-center {
+  @apply flex justify-center;
+}
+
+.v-center {
+  @apply flex items-center;
+}
+
+.hv-center {
+  @apply flex justify-center items-center;
+}
+
+p, span, h1, h2, h3, h4, h5, h6 {
+  @apply transitionItem;
+}
