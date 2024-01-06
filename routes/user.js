@@ -117,6 +117,7 @@ user.post("/registerScore", checkAuthorization_1.default, (req, res) => __awaite
     const newScore = yield (0, helper_1.registerScore)({ score, difficulty, user });
     if (!newScore.status)
         return res.status(400).json({ msg: "Error registering score" });
+    console.log(1);
     return res.status(200).json({ msg: "Score registered", user: newScore.user });
 }));
 user.get("/checkToken", checkAuthorization_1.default, (req, res) => {

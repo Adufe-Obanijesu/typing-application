@@ -122,7 +122,7 @@ user.post("/registerScore", checkAuthorization, async (req: AuthenticatedRequest
     const newScore = await registerScore({ score, difficulty, user });
 
     if (!newScore.status) return res.status(400).json({ msg: "Error registering score" });
-
+    console.log(1)
     return res.status(200).json({ msg: "Score registered", user: newScore.user });
 })
 
