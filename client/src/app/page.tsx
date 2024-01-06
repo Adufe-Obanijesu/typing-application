@@ -14,7 +14,7 @@ const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { audio, showLogin, showSignup, presets } = state;
+    const { audio, showLogin, showSignup, presets, user } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const [ text, setText ] = useState<string[]>([]);
@@ -58,7 +58,6 @@ const Home = () => {
     useEffect(() => {
         reset();
     }, [wordNumber, difficulty]);
-
 
     const handleInput = (e: KeyboardEvent) => {
         // test for allowed keys
@@ -134,7 +133,7 @@ const Home = () => {
             }
 
             {
-              showResult && <Result charCount={text.length} reset={reset}setShowResult={setShowResult} />
+              showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
             }
 
             {
@@ -150,4 +149,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default React.memo(Home);

@@ -19,7 +19,6 @@ const checkAuthorization = (req, res, next) => {
         User_1.default.findOne({ _id })
             .select("-password")
             .then((user) => {
-            console.log(user);
             if (!user) {
                 return res.status(422).json({ msg: "User not found" });
             }

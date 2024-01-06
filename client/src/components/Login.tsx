@@ -64,8 +64,9 @@ const Login = ({ func }: props) => {
         axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/login`, userDetails, config)
         .then((response: any) => {
             successNotification("User logged in successfully");
-            localStorage.setItem("typingToken", response.token);
+            localStorage.setItem("typingToken", response.data.token);
             dispatch({ type: "SET_SIGNED_IN_STATE", payload: true });
+            dispatch({ type: "SET_USER", payload: response.data.user });
             
             if (func) {
                 func();
@@ -81,6 +82,11 @@ const Login = ({ func }: props) => {
             setLoading(false);
         });
         
+    }
+
+    const signin = () => {
+        dispatch({ type: "SHOW_SIGNUP", payload: true });
+        dispatch({ type: "SHOW_LOGIN", payload: false });
     }
 
     const dismissModal = () => {
@@ -126,7 +132,7 @@ const Login = ({ func }: props) => {
                 }
                 </button>
             </form>
-            <p className="text-end text-sm mt-2 font-semibold">Not a user? Sign up <span className="text-orange-500 hover:text-orange-600 cursor-pointer transitionItem">here</span></p>
+            <p className="text-end text-sm mt-2 font-semibold">Not a user? Sign up <span className="text-orange-500 hover:text-orange-600 cursor-pointer transitionItem" onClick={signin}>here</span></p>
 
           </div>
         </Modal>

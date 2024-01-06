@@ -2,7 +2,7 @@
 
 
 import { StateContext } from '@/contexts/state';
-import React, { ReactNode, useReducer, useEffect, useCallback, useState } from 'react';
+import React, { ReactNode, useReducer, useEffect, useCallback, useState, useRef } from 'react';
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,11 +13,15 @@ import axios from 'axios';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
 
+    const hasRendered = useRef(false);
+
     const [ state, dispatch ] = useReducer(stateReducer, initialState);
 
-    const { darkMode } = state;
+    const { darkMode, signedIn } = state;
 
     const verifyToken = useCallback(() => {
+      if (signedIn) return;
+
       const token = localStorage.getItem("typingToken");
 
       if (!token) return;
@@ -63,11 +67,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-      verifyToken();
-    }, []);
+      if (hasRendered.current) return;
 
-    useEffect(() => {
       verifyToken();
+      hasRendered.current = true;
     }, []);
 
     useEffect(() => {

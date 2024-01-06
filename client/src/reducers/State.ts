@@ -6,7 +6,7 @@ type stateType = {
     showLogin: boolean
     user: any
     presets: {
-        wordNumber: 20 | 30 | 40 | 50 | 60 | 1
+        wordNumber: 20 | 30 | 40 | 50 | 60
         difficulty: "easy" | "medium" | "hard"
         error: number
         result: number
@@ -26,7 +26,7 @@ const initialState: stateType = {
     showLogin: false,
     user: null,
     presets: {
-        wordNumber: 1,
+        wordNumber: 20,
         difficulty: "easy",
         error: 0,
         result:  -1
@@ -83,29 +83,29 @@ const stateReducer = (state: stateType, action: actionType) => {
 
             return difficultyState;
         
-            case "SET_WORD_NUMBER":
-                const wordNumberState = {
-                    ...state,
-                    presets: {
-                        ...state.presets,
-                        wordNumber: action.payload,
-                    }
+        case "SET_WORD_NUMBER":
+            const wordNumberState = {
+                ...state,
+                presets: {
+                    ...state.presets,
+                    wordNumber: action.payload,
                 }
-    
-                return wordNumberState;
+            }
 
-            case "SET_ERROR":
-                const errorState = {
-                    ...state,
-                    presets: {
-                        ...state.presets,
-                        error: action.payload,
-                    }
+            return wordNumberState;
+
+        case "SET_ERROR":
+            const errorState = {
+                ...state,
+                presets: {
+                    ...state.presets,
+                    error: action.payload,
                 }
+            }
 
-                return errorState;
+            return errorState;
 
-            case "SET_RESULT":
+        case "SET_RESULT":
                 const resultState = {
                     ...state,
                     presets: {

@@ -3,7 +3,7 @@
 import { StateContext } from "@/contexts/state";
 import { errorNotification } from "@/utils/notifications";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
 import Modal from "./Modal";
 
 type props = {
@@ -19,10 +19,12 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
     const { result, error, difficulty } = presets;
 
     const [ loading, setLoading ] = useState(false);
+
+    const hasRendered = useRef(false);
     
     const accuracy = Math.round(((charCount - error) / charCount) * 100);
     
-    const registerScore = () => {
+    const signin = () => {
 
         if (!signedIn) {
             dispatch({ type: "SHOW_SIGNUP", payload: true })
@@ -30,22 +32,23 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
         }
     }
 
-    useEffect(() => {
+    const registerScore = () => {
         if (signedIn) {
             setLoading(true);
             const config = {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem("typingToken"),
                 }
             };
-
+    
             const data = {
                 score: result,
                 difficulty,
             }
             axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/registerScore`, data, config)
             .then((response: any) => {
-                dispatch({ type: "SET_USER", payload: response.user });
+                dispatch({ type: "SET_USER", payload: response.data.user });
             })
             .catch(() => {
                 errorNotification("Error registering score");
@@ -54,11 +57,18 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 setLoading(false);
             })
         }
+    }
+
+    
+    useEffect(() => {
+        if (hasRendered.current) return
+        registerScore();
+        hasRendered.current = true;
     }, []);
 
     const dismissModal = () => {
         if (!loading) {
-            setShowResult(false);
+            reset();
         }
     }
 
@@ -92,7 +102,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 {
                     !signedIn && <button
                     className="bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
-                    onClick={registerScore}
+                    onClick={signin}
                     >
                     Register Score
                     </button>

@@ -94,16 +94,18 @@ user.post("/login", (req: AuthenticatedRequest, res) => {
     .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you in", err }));
 });
 
-user.get("/scoreboard", checkAuthorization, (req, res) => {
-    const { number, difficulty, score } = req.body;
+user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) => {
+    const { number, difficulty } = req.body;
+    const { user } = req;
+    const score = user?.scores[difficulty].highScore;
 
-    User.find({ [`scores.${difficulty}.highScore`]: { $lte: score } })
+    User.find({ [`scores.${difficulty}.highScore`]: { $gte: score } })
     .select("-password")
     .sort({ [`scores.${difficulty}.highScore`]: -1 })
     .limit(number)
     .then((lteScores) => {
 
-        User.find({ [`scores.${difficulty}.highScore`]: { $gt: score } })
+        User.find({ [`scores.${difficulty}.highScore`]: { $lt: score } })
         .select("-password")
         .sort({ [`scores.${difficulty}.highScore`]: -1 })
         .limit(number + (number - lteScores.length))
@@ -122,7 +124,6 @@ user.post("/registerScore", checkAuthorization, async (req: AuthenticatedRequest
     const newScore = await registerScore({ score, difficulty, user });
 
     if (!newScore.status) return res.status(400).json({ msg: "Error registering score" });
-    console.log(1)
     return res.status(200).json({ msg: "Score registered", user: newScore.user });
 })
 
@@ -131,7 +132,7 @@ user.get("/checkToken", checkAuthorization, (req: AuthenticatedRequest, res) => 
     if (!req.user) {
         res.status(401).json({ msg: "User unauthorized" });
     }
-
+    
     return res.status(200).json({ msg: "User authorized", user: req.user });
 })
 
