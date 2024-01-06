@@ -21,12 +21,12 @@ interface userDetails {
 }
 
 interface props {
-    reset: () => void
-    result?: number
-    difficulty?: string
+    func?: () => void
 }
 
-const Signin = ({ reset }: props) => {
+// func is any extra function you will like to run
+
+const Login = ({ func }: props) => {
 
     const { state, dispatch } = useContext(StateContext);
     const { darkMode, presets } = state;
@@ -50,13 +50,8 @@ const Signin = ({ reset }: props) => {
         setUserDetails(newUser);
     }
 
-    const signup = (e: React.FormEvent<HTMLFormElement>) => {
+    const login = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        if (userDetails.password.length < 6) {
-            errorNotification("Password can not be less than 6 characters");
-            return;
-        }
 
         setLoading(true);
 
@@ -66,12 +61,17 @@ const Signin = ({ reset }: props) => {
             }
         }
 
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/signup`, userDetails, config)
+        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/login`, userDetails, config)
         .then((response: any) => {
-            successNotification("User signed up successfully");
+            successNotification("User logged in successfully");
             localStorage.setItem("typingToken", response.token);
-            dispatch({ type: "SIGNIN", payload: true });
-            reset();
+            dispatch({ type: "SET_SIGNED_IN_STATE", payload: true });
+            
+            if (func) {
+                func();
+            }
+            
+            dispatch({ type: "SHOW_LOGIN", payload: false });
         })
         .catch(err => {
             errorNotification(err.response.data.msg);
@@ -83,6 +83,14 @@ const Signin = ({ reset }: props) => {
         
     }
 
+    const dismissModal = () => {
+        if (func) {
+            func();
+        }
+
+        dispatch({ type: "SHOW_LOGIN", payload: false });
+    }
+
     const override = {
         borderColor: "white",
         margin: "0",
@@ -90,23 +98,22 @@ const Signin = ({ reset }: props) => {
       };
 
     return (
-        <Modal dismiss={reset}>
+        <Modal dismiss={dismissModal}>
           <div className={`z-10 relative md:rounded-2xl md:shadow-lg md:px-8 px-8 py-8 lg:w-1/3 md:w-2/3 h-full md:h-auto ${darkMode ? "darkBg" : "lightBg"}`}>
             
-            <form onSubmit={signup}>
-              <Text name="First Name" input="firstName" value={userDetails.firstName || ""} setInput={handleInput} />
-              <Text name="Last Name" input="lastName" value={userDetails.lastName || ""} setInput={handleInput} />
+            <h2 className="text-3xl mb-4 font-bold text-center">Log In</h2>
+
+            <form onSubmit={login}>
               <Text name="Email" type="email" input="email" value={userDetails.email || ""} setInput={handleInput} />
-              <p className="text-sm mb-1">Password should be 6 characters long</p>
               <Text name="Password" type="password" input="password" value={userDetails.password || ""} setInput={handleInput} />
 
               <button
-                className="bg-orange-500 hover:bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
+                className="bg-orange-500 hover:bg-orange-600 w-full text-center text-white rounded-md py-3 focus:outline-none"
                 disabled={loading}
                 >
                 {
                 !loading ? (
-                    <>Yes</>
+                    <>Log In</>
                 ) : (
                     <div className="hv-center">
                         <ClipLoader
@@ -119,10 +126,11 @@ const Signin = ({ reset }: props) => {
                 }
                 </button>
             </form>
+            <p className="text-end text-sm mt-2 font-semibold">Not a user? Sign up <span className="text-orange-500 hover:text-orange-600 cursor-pointer transitionItem">here</span></p>
 
           </div>
         </Modal>
     )
 }
 
-export default Signin;
+export default Login;

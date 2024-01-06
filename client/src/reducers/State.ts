@@ -1,9 +1,12 @@
 type stateType = {
     darkMode: boolean
-    signin: boolean
+    signedIn: boolean
     audio: boolean
+    showSignup: boolean
+    showLogin: boolean
+    user: any
     presets: {
-        wordNumber: number
+        wordNumber: 20 | 30 | 40 | 50 | 60 | 1
         difficulty: "easy" | "medium" | "hard"
         error: number
         result: number
@@ -17,10 +20,13 @@ type actionType = {
 
 const initialState: stateType = {
     darkMode: false,
-    signin: false,
+    signedIn: false,
     audio: false,
+    showSignup: false,
+    showLogin: false,
+    user: null,
     presets: {
-        wordNumber: 20,
+        wordNumber: 1,
         difficulty: "easy",
         error: 0,
         result:  -1
@@ -29,21 +35,37 @@ const initialState: stateType = {
 
 const stateReducer = (state: stateType, action: actionType) => {
     switch(action.type) {
-        case "SIGNIN":
+        case "SET_SIGNED_IN_STATE":
             const signinState = {
                 ...state,
-                signin: action.payload,
+                signedIn: action.payload,
             }
             return signinState;
 
-        case "CHANGE_MODE":
+        case "SHOW_SIGNUP":
+            const showSigninState = {
+                ...state,
+                showSignup: action.payload,
+            }
+
+            return showSigninState;
+
+        case "SHOW_LOGIN":
+            const showLoginState = {
+                ...state,
+                showLogin: action.payload,
+            }
+
+            return showLoginState;
+
+        case "SET_MODE":
             const modeState = {
                 ...state,
                 darkMode: action.payload,
             }
             return modeState;
 
-        case "CHANGE_AUDIO_SETTING":
+        case "SET_AUDIO_SETTING":
         const audioState = {
             ...state,
             audio: action.payload,
@@ -93,6 +115,13 @@ const stateReducer = (state: stateType, action: actionType) => {
                 }
 
                 return resultState;
+
+        case "SET_USER":
+            const user = {
+                ...state,
+                user: action.payload,
+            }
+            return user;
 
         default: return state;
     }

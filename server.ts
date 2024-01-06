@@ -6,7 +6,7 @@ const cors = require("cors");
 import user from "./routes/user";
 import mongoose from "mongoose";
 
-import checkAuthorization from "./middleware/login";
+import checkAuthorization from "./middleware/checkAuthorization";
 
 const app = express();
 

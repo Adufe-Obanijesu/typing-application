@@ -30,6 +30,12 @@ const checkAuthorization: ExtendedRequestHandler = (req: AuthenticatedRequest, r
         User.findOne({ _id })
         .select("-password")
         .then((user: any) => {
+            console.log(user);
+
+            if (!user) {
+              return res.status(422).json({ msg: "User not found" });
+            }
+
             req.user = user;
             next();
         })

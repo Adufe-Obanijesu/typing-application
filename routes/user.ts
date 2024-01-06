@@ -6,12 +6,12 @@ dotenv.config();
 
 import User from "../models/User";
 import { registerScore } from "../utils/helper";
-import checkAuthorization, { AuthenticatedRequest } from "../middleware/login";
+import checkAuthorization, { AuthenticatedRequest } from "../middleware/checkAuthorization";
 
 const user = Router();
 
 user.post("/signup", (req, res) => {
-    const { firstName, lastName, email, password, score } = req.body;
+    const { firstName, lastName, email, password, score, difficulty } = req.body;
 
     if (!firstName || !lastName || !email || !password) {
         return res.status(400).json({ msg: "Please fill in all the fields" });
@@ -42,10 +42,19 @@ user.post("/signup", (req, res) => {
             });
     
             newUser.save()
-            .then((user) => {
+            .then(async (user) => {
                 const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-                return res.status(200).json({ msg: "User signed up", user, token });
+                if (!score) {
+                    return res.status(200).json({ msg: "User signed up", user, token });
+                }
+    
+                if (!difficulty) return res.status(400).json({ msg: "Difficulty not specified", token });
+                const updateScore = await registerScore({ score, difficulty, user });
+                
+                if (!updateScore.status) return res.status(400).json({ msg: "Error in registering score", user: updateScore.user, token });
+    
+                return res.status(200).json({ msg: "User signed up and score registered", user, token });
             })
             .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you up1", err }));
         })
@@ -55,7 +64,7 @@ user.post("/signup", (req, res) => {
 
 });
 
-user.post("/signin", (req: AuthenticatedRequest, res) => {
+user.post("/login", (req: AuthenticatedRequest, res) => {
     const { email, password, score, difficulty } = req.body;
 
     User.findOne({ email })
@@ -75,9 +84,9 @@ user.post("/signin", (req: AuthenticatedRequest, res) => {
             if (!difficulty) return res.status(400).json({ msg: "Difficulty not specified", token });
             const updateScore = await registerScore({ score, difficulty, user });
             
-            if (!updateScore) return res.status(400).json({ msg: "Error in regiestering score", token });
+            if (!updateScore.status) return res.status(400).json({ msg: "Error in registering score", token });
 
-            return res.status(200).json({ msg: "User signed up and score registered", user, token });
+            return res.status(200).json({ msg: "User signed up and score registered", user: updateScore.user, token });
 
         })
         .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you in", err }));
@@ -87,8 +96,6 @@ user.post("/signin", (req: AuthenticatedRequest, res) => {
 
 user.get("/scoreboard", checkAuthorization, (req, res) => {
     const { number, difficulty, score } = req.body;
-
-    let response = [];
 
     User.find({ [`scores.${difficulty}.highScore`]: { $lte: score } })
     .select("-password")
@@ -108,5 +115,24 @@ user.get("/scoreboard", checkAuthorization, (req, res) => {
     })
     .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
 });
+
+user.post("/registerScore", checkAuthorization, async (req: AuthenticatedRequest, res) => {
+    const { score, difficulty } = req.body;
+    const { user } = req;
+    const newScore = await registerScore({ score, difficulty, user });
+
+    if (!newScore.status) return res.status(400).json({ msg: "Error registering score" });
+
+    return res.status(200).json({ msg: "Score registered", user: newScore.user });
+})
+
+user.get("/checkToken", checkAuthorization, (req: AuthenticatedRequest, res) => {
+    
+    if (!req.user) {
+        res.status(401).json({ msg: "User unauthorized" });
+    }
+
+    return res.status(200).json({ msg: "User authorized", user: req.user });
+})
 
 export default user;

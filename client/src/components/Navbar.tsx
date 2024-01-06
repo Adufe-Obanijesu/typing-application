@@ -7,25 +7,27 @@ import { FiMoon, FiSun } from "react-icons/fi";
 import { FaRegKeyboard } from "react-icons/fa";
 import { RxSpeakerLoud } from "react-icons/rx";
 import { RxSpeakerOff } from "react-icons/rx";
+import { HiOutlineUserCircle } from "react-icons/hi";
+
 import { StateContext } from "@/contexts/state";
 
 
 const Navbar = () => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, audio } = state;
+    const { darkMode, audio, user, signedIn } = state;
 
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const changeMode = () => {
         localStorage.setItem("typingMode", `${!darkMode}`);
-        dispatch({ type: "CHANGE_MODE", payload: !darkMode });
+        dispatch({ type: "SET_MODE", payload: !darkMode });
         buttonRef.current?.blur();
     }
 
     const changeAudioPreset = () => {
         localStorage.setItem("audioPreset", `${!audio}`);
-        dispatch({ type: "CHANGE_AUDIO_SETTING", payload: !audio });
+        dispatch({ type: "SET_AUDIO_SETTING", payload: !audio });
     }
 
     return (
@@ -34,6 +36,7 @@ const Navbar = () => {
                 <div>
                     <FaRegKeyboard className="text-4xl" />
                 </div>
+
                 <div className="flex items-center gap-4">
 
                     <div>
@@ -57,7 +60,16 @@ const Navbar = () => {
                             !darkMode ? <FiSun className="cursor-pointer text-xl dark:hidden" onClick={changeMode} /> : <FiMoon className="cursor-pointer text-xl dark:hidden" onClick={changeMode} />
                         }
                     </div>
-
+                    
+                    <div>
+                        
+                            {
+                                (signedIn && user) ? <div className="bg-orange-500 hv-center w-10 h-10 rounded-full">
+                                    <div className="text-lg font-semibold uppercase text-white">{user.firstName[0]}{user.lastName[0]}</div>
+                                    </div> : <HiOutlineUserCircle className="inline cursor-pointer text-2xl" />
+                            }
+                        
+                    </div>
                     
                 </div>
             </div>

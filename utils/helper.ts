@@ -14,6 +14,11 @@ interface props {
     user: any
 }
 
+interface response {
+    user: any
+    status: boolean
+}
+
 const registerScore = async ({ score, difficulty, user }: props) => {
     const { scores } = user;
 
@@ -43,16 +48,25 @@ const registerScore = async ({ score, difficulty, user }: props) => {
         }
     }
 
-    let response = false;
+    let response: response = {
+        user: null,
+        status: false,
+    };
     
     try {
-        await User.findOneAndUpdate({ _id: user._id }, { $set: updatedUser }, { new: true, reValidators: true });
+        const scoreResponse = await User.findOneAndUpdate({ _id: user._id }, { $set: updatedUser }, { new: true, reValidators: true });
         
-        response = true;
+        response = {
+            user: scoreResponse,
+            status: true,
+        };
     }
     catch(err) {
         console.log(err)
-        response = false;
+        response = {
+            user,
+            status: false,
+        };
     }
     
     return response;

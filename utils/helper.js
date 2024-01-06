@@ -32,14 +32,23 @@ const registerScore = ({ score, difficulty, user }) => __awaiter(void 0, void 0,
             scores: Object.assign(Object.assign({}, scores), { [difficulty]: Object.assign(Object.assign({}, scores[difficulty]), { scores: newScores }) })
         };
     }
-    let response = false;
+    let response = {
+        user: null,
+        status: false,
+    };
     try {
-        yield User_1.default.findOneAndUpdate({ _id: user._id }, { $set: updatedUser }, { new: true, reValidators: true });
-        response = true;
+        const scoreResponse = yield User_1.default.findOneAndUpdate({ _id: user._id }, { $set: updatedUser }, { new: true, reValidators: true });
+        response = {
+            user: scoreResponse,
+            status: true,
+        };
     }
     catch (err) {
         console.log(err);
-        response = false;
+        response = {
+            user,
+            status: false,
+        };
     }
     return response;
 });

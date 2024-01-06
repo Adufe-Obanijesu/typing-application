@@ -19,10 +19,10 @@ const dotenv = require("dotenv");
 dotenv.config();
 const User_1 = __importDefault(require("../models/User"));
 const helper_1 = require("../utils/helper");
-const login_1 = __importDefault(require("../middleware/login"));
+const checkAuthorization_1 = __importDefault(require("../middleware/checkAuthorization"));
 const user = (0, express_1.Router)();
 user.post("/signup", (req, res) => {
-    const { firstName, lastName, email, password, score } = req.body;
+    const { firstName, lastName, email, password, score, difficulty } = req.body;
     if (!firstName || !lastName || !email || !password) {
         return res.status(400).json({ msg: "Please fill in all the fields" });
     }
@@ -50,17 +50,25 @@ user.post("/signup", (req, res) => {
                 firstName, lastName, email, password: hashedPassword, scores,
             });
             newUser.save()
-                .then((user) => {
+                .then((user) => __awaiter(void 0, void 0, void 0, function* () {
                 const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-                return res.status(200).json({ msg: "User signed up", user, token });
-            })
+                if (!score) {
+                    return res.status(200).json({ msg: "User signed up", user, token });
+                }
+                if (!difficulty)
+                    return res.status(400).json({ msg: "Difficulty not specified", token });
+                const updateScore = yield (0, helper_1.registerScore)({ score, difficulty, user });
+                if (!updateScore.status)
+                    return res.status(400).json({ msg: "Error in registering score", user: updateScore.user, token });
+                return res.status(200).json({ msg: "User signed up and score registered", user, token });
+            }))
                 .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up1", err }));
         })
             .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up2", err }));
     })
         .catch((err) => res.status(400).json({ msg: "Error encountered while signing you up3", err }));
 });
-user.post("/signin", (req, res) => {
+user.post("/login", (req, res) => {
     const { email, password, score, difficulty } = req.body;
     User_1.default.findOne({ email })
         .then(user => {
@@ -77,17 +85,16 @@ user.post("/signin", (req, res) => {
             if (!difficulty)
                 return res.status(400).json({ msg: "Difficulty not specified", token });
             const updateScore = yield (0, helper_1.registerScore)({ score, difficulty, user });
-            if (!updateScore)
-                return res.status(400).json({ msg: "Error in regiestering score", token });
-            return res.status(200).json({ msg: "User signed up and score registered", user, token });
+            if (!updateScore.status)
+                return res.status(400).json({ msg: "Error in registering score", token });
+            return res.status(200).json({ msg: "User signed up and score registered", user: updateScore.user, token });
         }))
             .catch((err) => res.status(400).json({ msg: "Error encountered while signing you in", err }));
     })
         .catch((err) => res.status(400).json({ msg: "Error encountered while signing you in", err }));
 });
-user.get("/scoreboard", login_1.default, (req, res) => {
+user.get("/scoreboard", checkAuthorization_1.default, (req, res) => {
     const { number, difficulty, score } = req.body;
-    let response = [];
     User_1.default.find({ [`scores.${difficulty}.highScore`]: { $lte: score } })
         .select("-password")
         .sort({ [`scores.${difficulty}.highScore`]: -1 })
@@ -103,5 +110,19 @@ user.get("/scoreboard", login_1.default, (req, res) => {
             .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }));
     })
         .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }));
+});
+user.post("/registerScore", checkAuthorization_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { score, difficulty } = req.body;
+    const { user } = req;
+    const newScore = yield (0, helper_1.registerScore)({ score, difficulty, user });
+    if (!newScore.status)
+        return res.status(400).json({ msg: "Error registering score" });
+    return res.status(200).json({ msg: "Score registered", user: newScore.user });
+}));
+user.get("/checkToken", checkAuthorization_1.default, (req, res) => {
+    if (!req.user) {
+        res.status(401).json({ msg: "User unauthorized" });
+    }
+    return res.status(200).json({ msg: "User authorized", user: req.user });
 });
 exports.default = user;

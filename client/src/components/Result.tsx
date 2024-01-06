@@ -12,13 +12,16 @@ type props = {
 const Result = ({ charCount, reset, setShowResult }: props) => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, presets } = state;
+    const { darkMode, presets, signedIn } = state;
     const { result, error } = presets;
     
     const accuracy = Math.round(((charCount - error) / charCount) * 100);
     
     const registerScore = () => {
         setShowResult(false);
+        if (!signedIn) {
+            dispatch({ type: "SHOW_SIGNUP", payload: true })
+        }
     }
 
   return (
@@ -50,12 +53,14 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 {accuracy}%
             </div>
 
-            <button
-            className="bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
-            onClick={registerScore}
-            >
-            Register Score
-            </button>
+            {
+                !signedIn && <button
+                className="bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
+                onClick={registerScore}
+                >
+                Register Score
+                </button>
+            }
 
             <button
             className="bg-slate-900 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"

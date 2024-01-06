@@ -5,15 +5,16 @@ import React, { useEffect, useState, useContext } from 'react';
 import { calcWPM, capitalize } from '@/utils/helper';
 import Result from '@/components/Result';
 
-import Signin from '@/components/Signin';
+import Signup from '@/components/Signup';
 import Settings from '@/components/Settings';
 import { StateContext } from '@/contexts/state';
+import Login from '@/components/Login';
 
 const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { audio, signin, presets } = state;
+    const { audio, showLogin, showSignup, presets } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const [ text, setText ] = useState<string[]>([]);
@@ -137,8 +138,13 @@ const Home = () => {
             }
 
             {
-              (!signin && result > -1 && !showResult) && <Signin reset={reset} result={result} difficulty={difficulty} />
+                showSignup && <Signup func={reset} />
             }
+
+            {
+                showLogin && <Login func={reset} />
+            }
+        
         </div>
       </section>
     )
