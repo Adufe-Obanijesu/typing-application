@@ -3,12 +3,13 @@
 import { faker } from '@faker-js/faker/locale/en';
 import React, { useEffect, useState, useContext } from 'react';
 import { calcWPM, capitalize } from '@/utils/helper';
-import Result from '@/components/Result';
+import Result from '@/components/home/Result';
 
 import Signup from '@/components/Signup';
-import Settings from '@/components/Settings';
+import Settings from '@/components/home/Settings';
 import { StateContext } from '@/contexts/state';
 import Login from '@/components/Login';
+import Scoreboard from '@/components/home/Scoreboard';
 
 const Home = () => {
 
@@ -119,31 +120,40 @@ const Home = () => {
 
 
     return (
-      <section>
+      <section className="grid grid-cols-12 gap-4">
 
-        <Settings />
+        <div className='col-span-2'></div>
+
+        <div className='col-span-7'>
+
+            <Settings />
+            
+            <div className="tracking-wide leading-relaxed py-2 mt-2">
+                
+                {
+                text.map((letter, index) => {
+                    
+                    return <span key={letter + index} className={`ml-[3px] font-semibold text-lg border-slate-400 ${letter === " " && "px-[2px]"} ${index === pointer && "text-orange-500 border-b"} ${index < pointer && "text-slate-400"}`}>{letter}</span>;
+                })
+                }
+
+                {
+                showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
+                }
+
+                {
+                    showSignup && <Signup func={reset} />
+                }
+
+                {
+                    showLogin && <Login func={reset} />
+                }
+            
+            </div>
+        </div>
         
-          <div className="tracking-wide leading-relaxed py-2 mt-2">
-              
-            {
-              text.map((letter, index) => {
-                  
-                return <span key={letter + index} className={`ml-[3px] font-semibold text-lg border-slate-400 ${letter === " " && "px-[2px]"} ${index === pointer && "text-orange-500 border-b"} ${index < pointer && "text-slate-400"}`}>{letter}</span>;
-              })
-            }
-
-            {
-              showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
-            }
-
-            {
-                showSignup && <Signup func={reset} />
-            }
-
-            {
-                showLogin && <Login func={reset} />
-            }
-        
+        <div className="col-span-3">
+            <Scoreboard />
         </div>
       </section>
     )

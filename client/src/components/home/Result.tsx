@@ -4,7 +4,7 @@ import { StateContext } from "@/contexts/state";
 import { errorNotification } from "@/utils/notifications";
 import axios from "axios";
 import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
-import Modal from "./Modal";
+import Modal from "../Modal";
 
 type props = {
     charCount: number
@@ -27,7 +27,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
     const signin = () => {
 
         if (!signedIn) {
-            dispatch({ type: "SHOW_SIGNUP", payload: true })
+            dispatch({ type: "SHOW_LOGIN", payload: true })
             setShowResult(false);
         }
     }
@@ -46,7 +46,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 score: result,
                 difficulty,
             }
-            axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/registerScore`, data, config)
+            axios.put(`${process.env.NEXT_PUBLIC_SERVER}/user/registerScore`, data, config)
             .then((response: any) => {
                 dispatch({ type: "SET_USER", payload: response.data.user });
             })

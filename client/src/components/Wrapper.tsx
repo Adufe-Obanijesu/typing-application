@@ -83,7 +83,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
             dispatch
           }}>
 
-            <main className={`overflow-hidden relative flex justify-center py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"}`}>
+            <main className={`overflow-hidden relative py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"}`}>
                 
                 {children}
             

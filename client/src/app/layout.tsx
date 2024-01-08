@@ -22,7 +22,7 @@ export default function RootLayout({
       <body>
 
           <Wrapper>
-            <div className="w-1/2">
+            <div className="px-8">
               <Navbar />
               {children}
             </div>

@@ -12,6 +12,7 @@ import { successNotification, errorNotification } from "../utils/notifications";
 
 // context
 import { StateContext } from "@/contexts/state";
+import { override } from "@/utils/cliploader";
 
 interface userDetails {
     firstName: string
@@ -96,12 +97,6 @@ const Login = ({ func }: props) => {
 
         dispatch({ type: "SHOW_LOGIN", payload: false });
     }
-
-    const override = {
-        borderColor: "white",
-        margin: "0",
-        padding: "0",
-      };
 
     return (
         <Modal dismiss={dismissModal}>

@@ -2,6 +2,7 @@ import { Router } from "express";
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 dotenv.config();
 
 import User from "../models/User";
@@ -99,18 +100,20 @@ user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) =>
     const { user } = req;
     const score = user?.scores[difficulty].highScore;
 
-    User.find({ [`scores.${difficulty}.highScore`]: { $gte: score } })
+
+    User.find({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
     .select("-password")
     .sort({ [`scores.${difficulty}.highScore`]: -1 })
     .limit(number)
-    .then((lteScores) => {
-
-        User.find({ [`scores.${difficulty}.highScore`]: { $lt: score } })
+    .then((gtScores) => {
+        
+        User.find({ [`scores.${difficulty}.highScore`]: { $lte: score }, _id: {$ne: user?._id} })
         .select("-password")
         .sort({ [`scores.${difficulty}.highScore`]: -1 })
-        .limit(number + (number - lteScores.length))
-        .then(gteScores => {
-            return res.status(200).json({ scoreboard: [...lteScores, ...gteScores] });
+        .limit(number + (number - gtScores.length))
+        .then(lteScores => {
+            
+            return res.status(200).json({ scoreboard: [...gtScores, user, ...lteScores] });
         })
         .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
 
@@ -118,8 +121,9 @@ user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) =>
     .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
 });
 
-user.post("/registerScore", checkAuthorization, async (req: AuthenticatedRequest, res) => {
+user.put("/registerScore", checkAuthorization, async (req: AuthenticatedRequest, res) => {
     const { score, difficulty } = req.body;
+
     const { user } = req;
     const newScore = await registerScore({ score, difficulty, user });
 
