@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import UserScore from "./scoreboard/UserScore";
 
 import axios from "axios"
@@ -14,6 +14,7 @@ const Scoreboard = () => {
     const { result, difficulty } = state.presets;
 
     const [ response, setResponse ] = useState([]);
+    const [ position, setPosition ] = useState(-1);
     const [ loading, setLoading ] = useState(true);
 
     const fetchScoreBoard = () => {
@@ -43,6 +44,7 @@ const Scoreboard = () => {
         axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/scoreboard`, data, config)
         .then(response => {
             setResponse(response.data.scoreboard);
+            setPosition(response.data.position);
         })
         .catch((err: any) => {
             console.log(err);
@@ -52,6 +54,13 @@ const Scoreboard = () => {
             setLoading(false);
         })
     }
+
+    const getIndex = useMemo(() => {
+        if (response.length > 0 && user) {
+            return response.findIndex((eachResponse: any) => eachResponse._id === user._id);
+        }
+        return -1;
+    }, [response]);
 
     useEffect(() => {
             fetchScoreBoard();
@@ -83,12 +92,21 @@ const Scoreboard = () => {
                 }
 
                 {
-                    (response.length > 0 && !loading && user) && response.map((eachResponse: any) => {
+                    (response.length > 0 && !loading && user) && response.map((eachResponse: any, index) => {
+                        let pos;
+
+                        if (user._id === eachResponse._id) {
+                            pos = position;
+                        } else if (getIndex > index) {
+                            pos = position - (getIndex - index);
+                        } else {
+                            pos = position + (index - getIndex);
+                        }
 
                         if (user && (user._id === eachResponse._id)) {
-                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={2} isMe />
+                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} isMe />
                         }
-                        return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={2} />
+                        return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} />
                     })
                 }
             </ul>

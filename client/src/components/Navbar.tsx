@@ -31,7 +31,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="mb-4">
+        <nav className="">
             <div className="flex justify-between items-center py-2">
                 <div>
                     <FaRegKeyboard className="text-4xl" />
