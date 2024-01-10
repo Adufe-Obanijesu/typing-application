@@ -17,10 +17,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
     const [ state, dispatch ] = useReducer(stateReducer, initialState);
 
-    const { darkMode, signedIn } = state;
+    const { darkMode, user } = state;
 
     const verifyToken = useCallback(() => {
-      if (signedIn) return;
+      if (user) return;
 
       const token = localStorage.getItem("typingToken");
 
@@ -33,7 +33,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       }
       axios.get(`${process.env.NEXT_PUBLIC_SERVER}/user/checkToken`, config)
       .then(response => {
-        dispatch({ type: "SET_SIGNED_IN_STATE", payload: true });
         dispatch({ type: "SET_USER", payload: response.data.user });
       })
       .catch(() => {
@@ -83,7 +82,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
             dispatch
           }}>
 
-            <main className={`overflow-hidden relative py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"}`}>
+            <main className={`overflow-hidden relative py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"} min-h-screen`}>
                 
                 {children}
             

@@ -72,9 +72,9 @@ const Scoreboard = () => {
             <h3 className="text-xl font-bold mb-2">Scoreboard</h3>
 
             <ul className="flex justify-between">
-                <li className={`py-1 transitionItem cursor-pointer hover:text-white ${difficulty === "easy" && "border-b-2"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "easy" })}>Easy</li>
-                <li className={`py-1 transitionItem cursor-pointer hover:text-white ${difficulty === "medium" && "border-b-2"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "medium" })}>Medium</li>
-                <li className={`py-1 transitionItem cursor-pointer hover:text-white ${difficulty === "hard" && "border-b-2"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "hard" })}>Hard</li>
+                <li className={`py-1 transitionItem cursor-pointer ${darkMode ? "hover:text-white" : "hover:text-black hover:font-semibold"} ${difficulty === "easy" && "border-b-2 border-slate-400 font-semibold"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "easy" })}>Easy</li>
+                <li className={`py-1 transitionItem cursor-pointer ${darkMode ? "hover:text-white" : "hover:text-black hover:font-semibold"} ${difficulty === "medium" && "border-b-2 border-slate-400 font-semibold"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "medium" })}>Medium</li>
+                <li className={`py-1 transitionItem cursor-pointer ${darkMode ? "hover:text-white" : "hover:text-black hover:font-semibold"} ${difficulty === "hard" && "border-b-2 border-slate-400 font-semibold"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "hard" })}>Hard</li>
             </ul>
 
             <ul className="mt-4 flex flex-col gap-2">
@@ -84,7 +84,7 @@ const Scoreboard = () => {
                 }
 
                 {
-                    !user && !loading && <h4>Please log in</h4>
+                    (!user && !loading) && <h4>Please log in</h4>
                 }
 
                 {

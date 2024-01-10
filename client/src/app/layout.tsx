@@ -23,15 +23,15 @@ export default function RootLayout({
       <body>
 
           <Wrapper>
-            <div className="px-8 flex flex-col gap-4">
+            <div className="px-8 flex flex-col gap-4 h-full">
               <Navbar />
               <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-3">
+                <div className="col-span-2">
                   <Sidebar />
                 </div>
-              </div>
-              <div className="col-span-9">
-                {children}
+                <div className="col-span-10">
+                  {children}
+                </div>
               </div>
             </div>
           </Wrapper>

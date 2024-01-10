@@ -72,7 +72,6 @@ const Signup = ({ func }: props) => {
             
             successNotification("User signed up successfully");
             localStorage.setItem("typingToken", response.data.token);
-            dispatch({ type: "SET_SIGNED_IN_STATE", payload: true });
             dispatch({ type: "SET_USER", payload: response.data.user });
             if (func) {
                 func();
@@ -136,7 +135,7 @@ const Signup = ({ func }: props) => {
                 }
                 </button>
             </form>
-            <p className="text-end text-sm mt-2 font-semibold">Already a user? Log in <span className="text-orange-500 hover:text-orange-600 cursor-pointer transitionItem" onClick={login}>here</span></p>
+            <p className="text-end text-sm mt-2">Already a user? Log in <span className="font-semibold text-orange-500 hover:text-orange-600 cursor-pointer transitionItem" onClick={login}>here</span></p>
 
           </div>
         </Modal>

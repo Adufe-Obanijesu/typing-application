@@ -1,6 +1,5 @@
 type stateType = {
     darkMode: boolean
-    signedIn: boolean
     audio: boolean
     showSignup: boolean
     showLogin: boolean
@@ -20,7 +19,6 @@ type actionType = {
 
 const initialState: stateType = {
     darkMode: false,
-    signedIn: false,
     audio: false,
     showSignup: false,
     showLogin: false,
@@ -35,13 +33,6 @@ const initialState: stateType = {
 
 const stateReducer = (state: stateType, action: actionType) => {
     switch(action.type) {
-        case "SET_SIGNED_IN_STATE":
-            const signinState = {
-                ...state,
-                signedIn: action.payload,
-            }
-            return signinState;
-
         case "SHOW_SIGNUP":
             const showSigninState = {
                 ...state,

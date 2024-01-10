@@ -15,7 +15,7 @@ const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { audio, showLogin, showSignup, presets, user } = state;
+    const { audio, showLogin, showSignup, presets } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const [ text, setText ] = useState<string[]>([]);
@@ -120,9 +120,7 @@ const Home = () => {
 
 
     return (
-      <section className="grid grid-cols-12 gap-4">
-
-        <div className='col-span-2'></div>
+      <section className="grid grid-cols-10 gap-4">
 
         <div className='col-span-7'>
 

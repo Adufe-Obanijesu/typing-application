@@ -15,7 +15,7 @@ import { StateContext } from "@/contexts/state";
 const Navbar = () => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, audio, user, signedIn } = state;
+    const { darkMode, audio, user } = state;
 
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -64,7 +64,7 @@ const Navbar = () => {
                     <div>
                         
                             {
-                                (signedIn && user) ? <div className="bg-orange-500 hv-center w-10 h-10 rounded-full">
+                             user ? <div className="bg-orange-500 hv-center w-10 h-10 rounded-full">
                                     <div className="text-lg font-semibold uppercase text-white">{user.firstName[0]}{user.lastName[0]}</div>
                                     </div> : <HiOutlineUserCircle className="inline cursor-pointer text-2xl" />
                             }

@@ -15,7 +15,7 @@ type props = {
 const Result = ({ charCount, reset, setShowResult }: props) => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, presets, signedIn } = state;
+    const { darkMode, presets, user } = state;
     const { result, error, difficulty } = presets;
 
     const [ loading, setLoading ] = useState(false);
@@ -26,14 +26,14 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
     
     const signin = () => {
 
-        if (!signedIn) {
+        if (!user) {
             dispatch({ type: "SHOW_LOGIN", payload: true })
             setShowResult(false);
         }
     }
 
     const registerScore = () => {
-        if (signedIn) {
+        if (user) {
             setLoading(true);
             const config = {
                 headers: {
@@ -100,7 +100,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 </div>
 
                 {
-                    !signedIn && <button
+                    !user && <button
                     className="bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
                     onClick={signin}
                     >

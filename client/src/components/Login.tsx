@@ -15,8 +15,6 @@ import { StateContext } from "@/contexts/state";
 import { override } from "@/utils/cliploader";
 
 interface userDetails {
-    firstName: string
-    lastName: string
     email: string
     password: string
 }
@@ -66,7 +64,6 @@ const Login = ({ func }: props) => {
         .then((response: any) => {
             successNotification("User logged in successfully");
             localStorage.setItem("typingToken", response.data.token);
-            dispatch({ type: "SET_SIGNED_IN_STATE", payload: true });
             dispatch({ type: "SET_USER", payload: response.data.user });
             
             if (func) {
@@ -127,7 +124,7 @@ const Login = ({ func }: props) => {
                 }
                 </button>
             </form>
-            <p className="text-end text-sm mt-2 font-semibold">Not a user? Sign up <span className="text-orange-500 hover:text-orange-600 cursor-pointer transitionItem" onClick={signin}>here</span></p>
+            <p className="text-end text-sm mt-2">Not a user? Sign up <span className="font-bold text-orange-500 hover:text-orange-600 cursor-pointer transitionItem" onClick={signin}>here</span></p>
 
           </div>
         </Modal>

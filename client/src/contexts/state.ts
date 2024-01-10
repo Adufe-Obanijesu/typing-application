@@ -1,11 +1,11 @@
 import { stateType } from "@/reducers/State";
 import { Dispatch, createContext } from "react";
-import { action } from "@/reducers/State";
+import { actionType } from "@/reducers/State";
 
 
 interface context {
     state: stateType
-    dispatch: Dispatch<action>
+    dispatch: Dispatch<actionType>
 }
 
 export const StateContext = createContext({} as context);
