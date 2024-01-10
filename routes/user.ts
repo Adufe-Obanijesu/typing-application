@@ -104,7 +104,7 @@ user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) =>
     .then(result => {
         User.find({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
         .select("-password")
-        .sort({ [`scores.${difficulty}.highScore`]: -1 })
+        .sort({ [`scores.${difficulty}.highScore`]: 1 })
         .limit(number)
         .then((gtScores) => {
             
@@ -114,7 +114,7 @@ user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) =>
             .limit(number + (number - gtScores.length))
             .then(lteScores => {
                 
-                return res.status(200).json({ scoreboard: [...gtScores, user, ...lteScores], position: result+1 });
+                return res.status(200).json({ scoreboard: [...gtScores.reverse(), user, ...lteScores], position: result+1 });
             })
             .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
     

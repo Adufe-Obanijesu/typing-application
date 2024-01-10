@@ -102,7 +102,7 @@ user.post("/scoreboard", checkAuthorization_1.default, (req, res) => {
         .then(result => {
         User_1.default.find({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: { $ne: user === null || user === void 0 ? void 0 : user._id } })
             .select("-password")
-            .sort({ [`scores.${difficulty}.highScore`]: -1 })
+            .sort({ [`scores.${difficulty}.highScore`]: 1 })
             .limit(number)
             .then((gtScores) => {
             User_1.default.find({ [`scores.${difficulty}.highScore`]: { $lte: score }, _id: { $ne: user === null || user === void 0 ? void 0 : user._id } })
@@ -110,7 +110,7 @@ user.post("/scoreboard", checkAuthorization_1.default, (req, res) => {
                 .sort({ [`scores.${difficulty}.highScore`]: -1 })
                 .limit(number + (number - gtScores.length))
                 .then(lteScores => {
-                return res.status(200).json({ scoreboard: [...gtScores, user, ...lteScores], position: result + 1 });
+                return res.status(200).json({ scoreboard: [...gtScores.reverse(), user, ...lteScores], position: result + 1 });
             })
                 .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }));
         })
