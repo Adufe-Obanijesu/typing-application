@@ -80,7 +80,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                     <div className="h-center">
                         <div className={`w-48 h-48 hv-center rounded-full text-center ${darkMode ? "darkBg" : "lightBg"}`}>
                             <span className="text-5xl font-bold">
-                                {result}
+                                {result.toFixed(2)}
                                 <br />
                                 WPM
                             </span>

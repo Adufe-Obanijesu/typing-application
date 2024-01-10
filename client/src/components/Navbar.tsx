@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 // Icons
 import { FiMoon, FiSun } from "react-icons/fi";
@@ -15,9 +15,59 @@ import { StateContext } from "@/contexts/state";
 const Navbar = () => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, audio, user } = state;
+    const { darkMode, user, song } = state;
+
+    const [ audio, setAudio ] = useState(false);
 
     const buttonRef = useRef<HTMLButtonElement>(null);
+
+    let music: HTMLAudioElement; // Declare music outside the useEffect to have a single instance
+
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible' && audio) {
+      playMusic();
+    } else if (document.visibilityState === 'hidden') {
+      pauseMusic();
+    }
+  };
+
+  const playMusic = () => {
+
+    if (!music && song) {
+      // Create the music instance if it doesn't exist
+      music = new Audio(`/music/${song}.mp3`);
+      music.loop = true;
+    }
+    // Check if it's paused before playing to avoid restarting if it's already playing
+    if (music.paused && audio) {
+      music.play();
+    }
+  };
+
+  const pauseMusic = () => {
+    if (music && !music.paused) {
+      // Pause the music if it's playing
+      music.pause();
+    }
+  };
+  
+  useEffect(() => {
+
+    playMusic();
+
+    // Attach event listener for visibility change
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup when component unmounts
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // Pause and reset the music when the component unmounts
+      if (music && !music.paused) {
+        pauseMusic();
+        music.currentTime = 0;
+      }
+    };
+  }, [audio, song]);
 
     const changeMode = () => {
         localStorage.setItem("typingMode", `${!darkMode}`);
@@ -26,8 +76,12 @@ const Navbar = () => {
     }
 
     const changeAudioPreset = () => {
-        localStorage.setItem("audioPreset", `${!audio}`);
-        dispatch({ type: "SET_AUDIO_SETTING", payload: !audio });
+        setAudio(!audio);
+    }
+
+    const changeMusicPreset = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        localStorage.setItem("typingSong", e.target.value);
+        dispatch({ type: "SET_SONG", payload: e.target.value });
     }
 
     return (
@@ -38,6 +92,14 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
+
+                    <div>
+                    <select className="focus:outline-none cursor-pointer bg-transparent" onChange={changeMusicPreset} value={song}>
+                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"} dark:bg-slate-800`} value="music 1">Music 1</option>
+                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="music 2">Music 2</option>
+                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="music 3">Music 3</option>
+                    </select>
+                    </div>
 
                     <div>
                         {

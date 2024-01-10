@@ -17,7 +17,7 @@ const UserScore = ({ name, score, position, isMe }: props) => {
                     {name}
                 </p>
                 <p className="text-base">
-                    {score} WPM
+                    {score.toFixed(2)} WPM
                 </p>
             </div>
         </li>

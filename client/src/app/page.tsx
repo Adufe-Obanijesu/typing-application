@@ -2,9 +2,12 @@
 
 import { faker } from '@faker-js/faker/locale/en';
 import React, { useEffect, useState, useContext } from 'react';
-import { calcWPM, capitalize } from '@/utils/helper';
-import Result from '@/components/home/Result';
 
+// utils
+import { calcWPM, capitalize } from '@/utils/helper';
+
+// components
+import Result from '@/components/home/Result';
 import Signup from '@/components/Signup';
 import Settings from '@/components/home/Settings';
 import { StateContext } from '@/contexts/state';
@@ -15,7 +18,7 @@ const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { audio, showLogin, showSignup, presets } = state;
+    const { showLogin, showSignup, presets } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const [ text, setText ] = useState<string[]>([]);
@@ -71,27 +74,12 @@ const Home = () => {
         
         // test if correct key was pressed
         if (e.key !== text[pointer]) {
-            // Wrong typing sound
-            if (audio) {
-                if (typeof Audio !== 'undefined') {
-                    const wrongTypingSound = new Audio("/audio/typing2.wav");
-                    wrongTypingSound.play();
-                }
-            }
-
             if (pointer !== errPointer) {
               dispatch({ type: "SET_ERROR", payload: error + 1 });
                 setErrPointer(pointer);
 
             }
             return;
-        }
-
-        // Typing sound
-        if (audio && typeof Audio !== 'undefined') {
-            const typingSound = new Audio("/audio/typing2.wav");
-            typingSound.play();
-            
         }
 
         if (pointer === text.length - 1) {

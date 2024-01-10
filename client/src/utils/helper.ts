@@ -1,5 +1,5 @@
 const calcWPM = (timeTaken: number, charCount: number, errCount: number) => {
-    return Math.round((charCount - errCount) / (5 * (timeTaken / (60 * 1000))));
+    return (charCount - errCount) / (5 * (timeTaken / (60 * 1000)));
 }
 
 const capitalize = (text: string[]) => {

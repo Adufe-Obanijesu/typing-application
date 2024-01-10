@@ -1,9 +1,9 @@
 type stateType = {
     darkMode: boolean
-    audio: boolean
     showSignup: boolean
     showLogin: boolean
     user: any
+    song: string
     presets: {
         wordNumber: 20 | 30 | 40 | 50 | 60
         difficulty: "easy" | "medium" | "hard"
@@ -19,10 +19,10 @@ type actionType = {
 
 const initialState: stateType = {
     darkMode: false,
-    audio: false,
     showSignup: false,
     showLogin: false,
     user: null,
+    song: "music 1",
     presets: {
         wordNumber: 20,
         difficulty: "easy",
@@ -56,12 +56,12 @@ const stateReducer = (state: stateType, action: actionType) => {
             }
             return modeState;
 
-        case "SET_AUDIO_SETTING":
-        const audioState = {
-            ...state,
-            audio: action.payload,
-        }
-        return audioState;
+        case "SET_SONG":
+            const songState = {
+                ...state,
+                song: action.payload,
+            }
+            return songState;
 
         case "SET_DIFFICULTY":
             const difficultyState = {
