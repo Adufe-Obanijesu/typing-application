@@ -1,7 +1,7 @@
 "use client"
 
 import { faker } from '@faker-js/faker/locale/en';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 
 // utils
 import { calcWPM, capitalize } from '@/utils/helper';
@@ -12,7 +12,7 @@ import Signup from '@/components/Signup';
 import Settings from '@/components/home/Settings';
 import { StateContext } from '@/contexts/state';
 import Login from '@/components/Login';
-import Scoreboard from '@/components/home/Scoreboard';
+import Scoreboard from '@/components/home/scoreboard/Scoreboard';
 
 const Home = () => {
 
@@ -20,6 +20,11 @@ const Home = () => {
 
     const { showLogin, showSignup, presets } = state;
     const { wordNumber, difficulty, error, result } = presets;
+
+    const typingContainer = useRef<HTMLDivElement>(null);
+
+    // State to track focus
+    const [isFocused, setIsFocused] = useState(false);
 
     const [ text, setText ] = useState<string[]>([]);
     const [ pointer, setPointer ] = useState(0);
@@ -32,7 +37,6 @@ const Home = () => {
     const [ showResult, setShowResult ] = useState(false);
     
     const allowedPattern = /^[a-zA-Z0-9!,.?_\- ]$/;
-
 
     const reset = () => {
         let newText: string[] = [];
@@ -59,13 +63,26 @@ const Home = () => {
         setShowResult(false);
     }
 
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+    };
+   
+
     useEffect(() => {
         reset();
     }, [wordNumber, difficulty]);
 
     const handleInput = (e: KeyboardEvent) => {
+
         // test for allowed keys
         if (!allowedPattern.test(e.key)) return;
+        
+        // prevent default actions like space moving the scrollbar
+        e.preventDefault();
 
         if (pointer === 0) {
             const time = new Date().getTime();
@@ -95,26 +112,38 @@ const Home = () => {
     }
 
     useEffect(() => {
-        window.addEventListener("keypress", handleInput);
+        typingContainer.current?.addEventListener("keypress", handleInput);
 
         if (result > -1) {
-            window.removeEventListener("keypress", handleInput);
+            typingContainer.current?.removeEventListener("keypress", handleInput);
         }
 
         return () => {
-            window.removeEventListener("keypress", handleInput);
+            typingContainer.current?.removeEventListener("keypress", handleInput);
         }
     }, [text, pointer, errPointer, startTime, endTime, result]);
 
+    useEffect(() => {
+        typingContainer.current?.focus();
+        setIsFocused(true);
+    }, [text, difficulty]);
+
 
     return (
-      <section className="grid grid-cols-10 gap-4">
+      <section className="grid grid-cols-10 gap-4 h-full">
 
-        <div className='col-span-7'>
+        <div className='col-span-7 flex flex-col'>
 
             <Settings />
             
-            <div className="tracking-wide leading-relaxed py-2 mt-2">
+            <div 
+            ref={typingContainer}
+            tabIndex={0}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            className="grow relative tracking-wide leading-relaxed py-4 mt-2 px-3 focus:outline-none"
+            autoFocus
+            >
                 
                 {
                 text.map((letter, index) => {
@@ -124,19 +153,30 @@ const Home = () => {
                 }
 
                 {
-                showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
+                    !isFocused && (
+                        <div className="absolute top-0 left-0 h-full w-full z-10">
+                            <div className="h-full w-full bg-slate-600/20 rounded-lg backdrop-blur-sm hv-center">
+                            </div>
+                            <div className="absolute top-0 left-0 w-full h-full hv-center cursor-pointer">
+                                <p className="text-xl font-semibold">Click to continue</p>
+                            </div>
+                        </div>
+                    )
                 }
-
-                {
-                    showSignup && <Signup func={reset} />
-                }
-
-                {
-                    showLogin && <Login func={reset} />
-                }
-            
             </div>
         </div>
+        
+        {
+        showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
+        }
+
+        {
+            showSignup && <Signup func={reset} />
+        }
+
+        {
+            showLogin && <Login func={reset} />
+        }
         
         <div className="col-span-3">
             <Scoreboard />

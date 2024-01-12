@@ -95,38 +95,6 @@ user.post("/login", (req: AuthenticatedRequest, res) => {
     .catch((err: any) => res.status(400).json({ msg: "Error encountered while signing you in", err }));
 });
 
-user.post("/scoreboard", checkAuthorization, (req: AuthenticatedRequest, res) => {
-    const { number, difficulty } = req.body;
-    const { user } = req;
-    const score = user?.scores[difficulty].highScore;
-
-    User.countDocuments({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
-    .then(result => {
-        User.find({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
-        .select("-password")
-        .sort({ [`scores.${difficulty}.highScore`]: 1 })
-        .limit(number)
-        .then((gtScores) => {
-            
-            User.find({ [`scores.${difficulty}.highScore`]: { $lte: score }, _id: {$ne: user?._id} })
-            .select("-password")
-            .sort({ [`scores.${difficulty}.highScore`]: -1 })
-            .limit(number + (number - gtScores.length))
-            .then(lteScores => {
-                
-                return res.status(200).json({ scoreboard: [...gtScores.reverse(), user, ...lteScores], position: result+1 });
-            })
-            .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
-    
-        })
-        .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }))
-    })
-    .catch(() => {
-        res.status(400).json({ msg: "Error getting scoreboard" })
-    })
-
-});
-
 user.put("/registerScore", checkAuthorization, async (req: AuthenticatedRequest, res) => {
     const { score, difficulty } = req.body;
 

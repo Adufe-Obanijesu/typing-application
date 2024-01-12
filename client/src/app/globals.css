@@ -13,6 +13,24 @@
   src: url("/fonts/PlayfairDisplay-VariableFont_wght.ttf");
 }
 
+.custom-scrollbar {
+  overflow-y: scroll; /* Enable vertical scrollbar */
+  scrollbar-width: thin; /* Set the width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar for WebKit browsers */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4a5568; /* Set the color of the scrollbar thumb */
+  border-radius: 4px; /* Set the border radius of the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-slate-900 rounded-lg;
+}
+
 .darkText {
   @apply text-slate-300; 
 }

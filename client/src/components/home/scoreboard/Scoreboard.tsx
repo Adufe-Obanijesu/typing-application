@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState, useMemo } from "react";
-import UserScore from "./scoreboard/UserScore";
+import UserScore from "./UserScore";
 
 import axios from "axios"
 import { errorNotification } from "@/utils/notifications";
 import { ClipLoader } from "react-spinners";
 import { override, overrideLight } from "@/utils/cliploader";
 import { StateContext } from "@/contexts/state";
+import ScoreboardModal from "./ScoreboardModal";
 
 const Scoreboard = () => {
 
@@ -17,12 +18,15 @@ const Scoreboard = () => {
     const [ position, setPosition ] = useState(-1);
     const [ loading, setLoading ] = useState(true);
 
+    // scoreboard modal
+    // const [ modal, setModal ] = useState(true);
+
     const fetchScoreBoard = () => {
         
         const allScores = user && user?.scores[difficulty].scores;
-
+        
         // we need to check the last one before the current score to check if higher
-        if (!user || (result > 0 && allScores[allScores.length - 1] !== user?.highScore)) {
+        if (!user || (result > 0 && allScores[allScores.length - 1] !== user?.scores[difficulty]?.highScore)) {
             setLoading(false);
             return;
         };
@@ -37,11 +41,11 @@ const Scoreboard = () => {
         const config = {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": localStorage.getItem("typingToken"),
+                "Authorization": `Bearer ${localStorage.getItem("typingToken")}`,
             }
         }
 
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/scoreboard`, data, config)
+        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos`, data, config)
         .then(response => {
             setResponse(response.data.scoreboard);
             setPosition(response.data.position);
@@ -110,6 +114,10 @@ const Scoreboard = () => {
                     })
                 }
             </ul>
+
+            {
+                // modal && <ScoreboardModal setModal={setModal} />
+            }
 
         </aside>
     )

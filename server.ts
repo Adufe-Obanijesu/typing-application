@@ -7,6 +7,7 @@ import user from "./routes/user";
 import mongoose from "mongoose";
 
 import checkAuthorization from "./middleware/checkAuthorization";
+import scoreboard from "./routes/scoreboard";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 
 // routes
 app.use("/user", user);
+app.use("/scoreboard", scoreboard);
 
 app.get("/", checkAuthorization, (req, res) => {
     console.log("got here");

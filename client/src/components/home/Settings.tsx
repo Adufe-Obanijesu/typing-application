@@ -18,7 +18,7 @@ const Settings = () => {
     const { wordNumber, difficulty, error } = state.presets;
 
     return (
-        <div className="border-b border-slate-400 py-2 flex justify-end gap-4 mb-4">
+        <div className="border-b border-slate-400 py-2 flex justify-end gap-4">
             
             <div className="flex gap-1">
                 <span>
@@ -32,9 +32,9 @@ const Settings = () => {
 
             <div>
             <select className="focus:outline-none cursor-pointer bg-transparent" onChange={(e: React.ChangeEvent<HTMLSelectElement>) => dispatch({ type: "SET_DIFFICULTY", payload: e.target.value })} value={difficulty}>
-                <option className={`dark:bg-slate-800 ${darkMode && "darkBg"} dark:bg-slate-800`} value="easy">Easy</option>
-                <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="medium">Medium</option>
-                <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="hard">Hard</option>
+                <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} bg-slate-800`} value="easy">Easy</option>
+                <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} bg-slate-800`} value="medium">Medium</option>
+                <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} bg-slate-800`} value="hard">Hard</option>
             </select>
             </div>
 
@@ -44,11 +44,11 @@ const Settings = () => {
                 </span>
 
                 <select className="focus:outline-none cursor-pointer bg-transparent" onChange={(e: React.ChangeEvent<HTMLSelectElement>) => dispatch({ type: "SET_WORD_NUMBER", payload: Number(e.target.value) })} value={wordNumber}>
-                    <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value={20}>20</option>
-                    <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value={30}>30</option>
-                    <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value={40}>40</option>
-                    <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value={50}>50</option>
-                    <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value={60}>60</option>
+                    <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value={20}>20</option>
+                    <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value={30}>30</option>
+                    <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value={40}>40</option>
+                    <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value={50}>50</option>
+                    <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value={60}>60</option>
                 </select>
             </div>
         </div>

@@ -95,9 +95,9 @@ const Navbar = () => {
 
                     <div>
                     <select className="focus:outline-none cursor-pointer bg-transparent" onChange={changeMusicPreset} value={song}>
-                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"} dark:bg-slate-800`} value="music 1">Music 1</option>
-                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="music 2">Music 2</option>
-                        <option className={`dark:bg-slate-800 ${darkMode && "darkBg"}} dark:bg-slate-800`} value="music 3">Music 3</option>
+                        <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="music 1">Music 1</option>
+                        <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="music 2">Music 2</option>
+                        <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="music 3">Music 3</option>
                     </select>
                     </div>
 
