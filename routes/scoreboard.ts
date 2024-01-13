@@ -15,17 +15,21 @@ scoreboard.post("/myPos", checkAuthorization, (req: AuthenticatedRequest, res) =
 
     User.countDocuments({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
     .then(result => {
-        User.find({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: {$ne: user?._id} })
+        User.find({ $and: [ {[`scores.${difficulty}.highScore`]: { $gt: score, $ne: 0 }}, {_id: {$ne: user?._id}} ] })
         .select("-password")
         .sort({ [`scores.${difficulty}.highScore`]: 1 })
         .limit(number)
         .then((gtScores) => {
             
-            User.find({ [`scores.${difficulty}.highScore`]: { $lte: score }, _id: {$ne: user?._id} })
+            User.find({ $and: [ {[`scores.${difficulty}.highScore`]: { $lte: score, $ne: 0 }}, {_id: {$ne: user?._id}} ] })
             .select("-password")
             .sort({ [`scores.${difficulty}.highScore`]: -1 })
             .limit(number + (number - gtScores.length))
             .then(lteScores => {
+
+                if (user?.scores[difficulty].highScore <= 0) {
+                    return res.status(200).json({ scoreboard: [...gtScores.reverse(), ...lteScores], position: result+1 });
+                }
                 
                 return res.status(200).json({ scoreboard: [...gtScores.reverse(), user, ...lteScores], position: result+1 });
             })
@@ -44,10 +48,25 @@ scoreboard.post("/top10", checkAuthorization, (req, res) => {
     const { difficulty } = req.body;
     const number = 10;
     
-    User.find()
+    User.find({ [`scores.${difficulty}.highScore`]: {$ne: 0} })
     .select("-password")
     .sort({ [`scores.${difficulty}.highScore`]: -1 })
     .limit(number)
+    .then((users) => {        
+        return res.status(200).json({ scoreboard: users });    
+    })
+    .catch(() => {
+        res.status(400).json({ msg: "Error getting scoreboard" });
+    })
+
+});
+
+scoreboard.post("/all", checkAuthorization, (req, res) => {
+    const { difficulty } = req.body;
+    
+    User.find({ [`scores.${difficulty}.highScore`]: {$ne: 0} })
+    .select("-password")
+    .sort({ [`scores.${difficulty}.highScore`]: -1 })
     .then((users) => {        
         return res.status(200).json({ scoreboard: users });    
     })

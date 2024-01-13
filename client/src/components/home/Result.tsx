@@ -5,6 +5,8 @@ import { errorNotification } from "@/utils/notifications";
 import axios from "axios";
 import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
 import Modal from "../Modal";
+import { ClipLoader } from "react-spinners";
+import { override, overrideLight } from "@/utils/cliploader";
 
 type props = {
     charCount: number
@@ -100,6 +102,15 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 </div>
 
                 {
+                    loading && (
+                        <div className="hv-center gap-2">
+                            Please wait while we register your score
+                            <ClipLoader size={20} cssOverride={darkMode ? override : overrideLight} />
+                        </div>
+                    )
+                }
+
+                {
                     !user && <button
                     className="bg-orange-600 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
                     onClick={signin}
@@ -110,7 +121,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
 
                 <button
                 className="bg-slate-900 mt-4 w-full text-center text-white rounded-md py-3 focus:outline-none"
-                onClick={reset}
+                onClick={dismissModal}
                 autoFocus
                 >
                 Dismiss message

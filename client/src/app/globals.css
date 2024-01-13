@@ -27,10 +27,6 @@
   border-radius: 4px; /* Set the border radius of the thumb */
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-slate-900 rounded-lg;
-}
-
 .darkText {
   @apply text-slate-300; 
 }

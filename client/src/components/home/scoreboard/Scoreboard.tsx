@@ -19,7 +19,7 @@ const Scoreboard = () => {
     const [ loading, setLoading ] = useState(true);
 
     // scoreboard modal
-    // const [ modal, setModal ] = useState(true);
+    const [ modal, setModal ] = useState(false);
 
     const fetchScoreBoard = () => {
         
@@ -73,7 +73,12 @@ const Scoreboard = () => {
     return (
         <aside className="px-4">
             
-            <h3 className="text-xl font-bold mb-2">Scoreboard</h3>
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xl font-bold mb-2">Scoreboard</h3>
+                {
+                    user && <button className="bg-orange-500 hover:bg-orange-600 p-4 py-1 text-white rounded-lg" onClick={() => setModal(true)}>View</button>
+                }  
+            </div>
 
             <ul className="flex justify-between">
                 <li className={`py-1 transitionItem cursor-pointer ${darkMode ? "hover:text-white" : "hover:text-black hover:font-semibold"} ${difficulty === "easy" && "border-b-2 border-slate-400 font-semibold"}`} onClick={() => dispatch({ type: "SET_DIFFICULTY", payload: "easy" })}>Easy</li>
@@ -116,7 +121,7 @@ const Scoreboard = () => {
             </ul>
 
             {
-                // modal && <ScoreboardModal setModal={setModal} />
+                modal && <ScoreboardModal setModal={setModal} />
             }
 
         </aside>

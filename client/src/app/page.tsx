@@ -153,7 +153,7 @@ const Home = () => {
                 }
 
                 {
-                    !isFocused && (
+                    (!isFocused && !showResult) && (
                         <div className="absolute top-0 left-0 h-full w-full z-10">
                             <div className="h-full w-full bg-slate-600/20 rounded-lg backdrop-blur-sm hv-center">
                             </div>
