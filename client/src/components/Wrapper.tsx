@@ -29,7 +29,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
       axios.get(`${process.env.NEXT_PUBLIC_SERVER}/user/checkToken`, config)
       .then(response => {
@@ -38,6 +38,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       .catch(() => {
         dispatch({ type: "SET_LOGIN", payload: true });
       })
+
     }, []);
 
     const getPresets = useCallback(() => {
@@ -61,10 +62,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
+
       if (hasRendered.current) return;
 
       verifyToken();
       hasRendered.current = true;
+
     }, []);
 
     useEffect(() => {

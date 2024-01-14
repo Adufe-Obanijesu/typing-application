@@ -35,13 +35,14 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
     }
 
     const registerScore = () => {
+
         if (user) {
             setLoading(true);
             const config = {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": localStorage.getItem("typingToken"),
-                }
+                },
             };
     
             const data = {
@@ -53,7 +54,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 dispatch({ type: "SET_USER", payload: response.data.user });
             })
             .catch(() => {
-                errorNotification("Error registering score");
+                errorNotification("Error registering score. Please check your internet connection!");
             })
             .finally(() => {
                 setLoading(false);
@@ -63,9 +64,11 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
 
     
     useEffect(() => {
+
         if (hasRendered.current) return
         registerScore();
         hasRendered.current = true;
+
     }, []);
 
     const dismissModal = () => {

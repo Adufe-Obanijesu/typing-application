@@ -21,7 +21,7 @@ const Scoreboard = () => {
     // scoreboard modal
     const [ modal, setModal ] = useState(false);
 
-    const fetchScoreBoard = () => {
+    const fetchScoreBoard = (signal: AbortSignal) => {
         
         const allScores = user && user?.scores[difficulty].scores;
         
@@ -42,7 +42,8 @@ const Scoreboard = () => {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("typingToken")}`,
-            }
+            },
+            signal,
         }
 
         axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos`, data, config)
@@ -51,8 +52,10 @@ const Scoreboard = () => {
             setPosition(response.data.position);
         })
         .catch((err: any) => {
-            console.log(err);
-            errorNotification("Error getting scoreboard");
+            if (!axios.isCancel(err)) {
+                console.log(err);
+                errorNotification("Error getting scoreboard. Please check your internet connection!");
+            }
         })
         .finally(() => {
             setLoading(false);
@@ -67,7 +70,13 @@ const Scoreboard = () => {
     }, [response]);
 
     useEffect(() => {
-            fetchScoreBoard();
+        const controller = new AbortController();
+        const { signal } = controller;
+        fetchScoreBoard(signal);
+
+        return () => {
+            controller.abort();
+        }
     }, [difficulty, user]);
 
     return (

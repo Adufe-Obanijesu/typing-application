@@ -24,14 +24,15 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
     const [ loading, setLoading ] = useState(false);
 
 
-    const fetchTop10 = (token: string) => {
+    const fetchTop10 = (token: string, signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
-            }
+            },
+            signal,
         }
         setLoading(true);
         const data = {
@@ -42,20 +43,23 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             setResponse(response.data.scoreboard);
         })
         .catch(err => {
-            errorNotification("Error fetching scoreboard");
-            console.log(err);
+            if (!axios.isCancel(err)) {
+                console.error(err);
+                errorNotification("Error fetching scoreboard. Please check your internet connection!");
+            }
         })
         .finally(() => setLoading(false));
     }
 
-    const fetchAll = (token: string) => {
+    const fetchAll = (token: string, signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
-            }
+            },
+            signal,
         }
         setLoading(true);
         const data = {
@@ -66,13 +70,15 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             setResponse(response.data.scoreboard);
         })
         .catch(err => {
-            errorNotification("Error fetching scoreboard");
-            console.log(err);
+            if (!axios.isCancel(err)) {
+                errorNotification("Error fetching scoreboard. Please check your internet connection!");
+                console.log(err);
+            }
         })
         .finally(() => setLoading(false));
     }
 
-    const fetchMyPos = (token: string) => {
+    const fetchMyPos = (token: string, signal: AbortSignal) => {
         setLoading(true);
 
         const data = {
@@ -84,7 +90,8 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("typingToken")}`,
-            }
+            },
+            signal,
         }
 
         axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos`, data, config)
@@ -93,8 +100,10 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             setPosition(response.data.position);
         })
         .catch((err: any) => {
-            console.log(err);
-            errorNotification("Error getting scoreboard");
+            if (!axios.isCancel(err)) {
+                console.log(err);
+                errorNotification("Error getting scoreboard. Please check your internet connection!");
+            }
         })
         .finally(() => {
             setLoading(false);
@@ -103,6 +112,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
     
     useEffect(() => {
 
+        const controller = new AbortController();
+        const { signal } = controller;
+
         const token = localStorage.getItem("typingToken");
 
         if (!token) {
@@ -110,13 +122,16 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         }
 
         if (nav === "top10") {
-            fetchTop10(token);
+            fetchTop10(token, signal);
         } else if (nav === "all") {
-            fetchAll(token);
+            fetchAll(token, signal);
         } else {
-            fetchMyPos(token);
+            fetchMyPos(token, signal);
         }
 
+        return () => {
+            controller.abort();
+        }
         
     }, [nav]);
 
@@ -152,7 +167,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
                     <li className={`py-1 transitionItem cursor-pointer ${darkMode ? "hover:text-white" : "hover:text-black hover:font-semibold"} ${nav === "myPos" && "border-b-2 border-slate-400 font-semibold"}`} onClick={() => setNav("myPos")}>My Position</li>
                 </ul>
 
-                <div className={`transitionItem py-2 px-4 rounded-lg dark:bg-slate-700 ${darkMode ? "bg-slate-700" : "bg-slate-100"}`}>
+                <div className={`transitionItem py-2 px-4 rounded-lg dark:bg-slate-700 ${darkMode ? "bg-slate-700" : "bg-slate-200"}`}>
                     <div className="flex gap-4 items-center">
                         <input type="text" className="grow bg-transparent focus:outline-none" placeholder="Name" value={search} onChange={e => searchWord(e.target.value)} autoFocus />
                     </div>
