@@ -33,11 +33,6 @@ const Scoreboard = () => {
 
         setLoading(true);
 
-        const data = {
-            difficulty,
-            number: 2,
-        }
-
         const config = {
             headers: {
                 "Content-Type": "application/json",
@@ -46,7 +41,7 @@ const Scoreboard = () => {
             signal,
         }
 
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos`, data, config)
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos?difficulty=${difficulty}&number=${2}`, config)
         .then(response => {
             setResponse(response.data.scoreboard);
             setPosition(response.data.position);

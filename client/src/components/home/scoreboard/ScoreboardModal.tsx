@@ -18,11 +18,15 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
     const { difficulty } = presets;
 
     const [ nav, setNav ] = useState<nav>("top10");
+    const [ scopedDifficulty, setScopedDifficulty ] = useState("");
     const [ response, setResponse ] = useState([]);
     const [ position, setPosition ] = useState(0);
     const [ search, setSearch ] = useState("");
     const [ loading, setLoading ] = useState(false);
 
+    useEffect(() => {
+        setScopedDifficulty(difficulty);
+    }, []);
 
     const fetchTop10 = (token: string, signal: AbortSignal) => {
         setLoading(true);
@@ -35,10 +39,8 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             signal,
         }
         setLoading(true);
-        const data = {
-            difficulty,
-        }
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/top10`, data, config)
+        
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/top10?difficulty=${scopedDifficulty}`, config)
         .then(response => {
             setResponse(response.data.scoreboard);
         })
@@ -62,10 +64,8 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             signal,
         }
         setLoading(true);
-        const data = {
-            difficulty,
-        }
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/all`, data, config)
+        
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/all?difficulty=${scopedDifficulty}`, config)
         .then(response => {
             setResponse(response.data.scoreboard);
         })
@@ -81,11 +81,6 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
     const fetchMyPos = (token: string, signal: AbortSignal) => {
         setLoading(true);
 
-        const data = {
-            difficulty,
-            number: 3,
-        }
-
         const config = {
             headers: {
                 "Content-Type": "application/json",
@@ -94,7 +89,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             signal,
         }
 
-        axios.post(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos`, data, config)
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos?difficulty=${scopedDifficulty}&number=${3}`, config)
         .then(response => {
             setResponse(response.data.scoreboard);
             setPosition(response.data.position);
@@ -109,8 +104,10 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             setLoading(false);
         })
     }
-    
+
     useEffect(() => {
+
+        if (scopedDifficulty === "") return;
 
         const controller = new AbortController();
         const { signal } = controller;
@@ -133,7 +130,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             controller.abort();
         }
         
-    }, [nav]);
+    }, [nav, scopedDifficulty]);
 
     const dismissModal = () => {
         setModal(false);
@@ -170,6 +167,12 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
                 <div className={`transitionItem py-2 px-4 rounded-lg dark:bg-slate-700 ${darkMode ? "bg-slate-700" : "bg-slate-200"}`}>
                     <div className="flex gap-4 items-center">
                         <input type="text" className="grow bg-transparent focus:outline-none" placeholder="Name" value={search} onChange={e => searchWord(e.target.value)} autoFocus />
+
+                        <select className="focus:outline-none cursor-pointer bg-transparent" onChange={e => setScopedDifficulty(e.target.value)} value={scopedDifficulty}>
+                            <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="easy">Easy</option>
+                            <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="medium">Medium</option>
+                            <option className={`dark:bg-slate-800 ${darkMode ? "darkBg" : "lightBg"} dark:bg-slate-800`} value="hard">Hard</option>
+                        </select>
                     </div>
                 </div>
 
@@ -185,9 +188,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
 
                     {
                         (response.length > 0 && user && !loading && nav !== "myPos") && response.map((eachResponse: any, index: number) => {
-                            if (eachResponse._id === user._id) return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[difficulty].highScore} isMe />
+                            if (eachResponse._id === user._id) return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[scopedDifficulty].highScore} isMe />
                             
-                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[difficulty].highScore} />
+                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[scopedDifficulty].highScore} />
                         })
                     }
 
@@ -204,9 +207,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
                             }
     
                             if (user && (user._id === eachResponse._id)) {
-                                return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} isMe />
+                                return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[scopedDifficulty].highScore} position={pos} isMe />
                             }
-                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} />
+                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[scopedDifficulty].highScore} position={pos} />
                         })
                     }
                 </div>

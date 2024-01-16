@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerScore = void 0;
+exports.getTop = exports.registerScore = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const registerScore = ({ score, difficulty, user }) => __awaiter(void 0, void 0, void 0, function* () {
     const { scores } = user;
@@ -53,3 +53,27 @@ const registerScore = ({ score, difficulty, user }) => __awaiter(void 0, void 0,
     return response;
 });
 exports.registerScore = registerScore;
+const getTop = ({ difficulty, number }) => __awaiter(void 0, void 0, void 0, function* () {
+    let response = {
+        status: false,
+        data: [],
+    };
+    try {
+        const users = yield User_1.default.find({ [`scores.${difficulty}.highScore`]: { $ne: 0 } })
+            .select("-password")
+            .sort({ [`scores.${difficulty}.highScore`]: -1 })
+            .limit(number);
+        response = {
+            status: true,
+            data: users,
+        };
+    }
+    catch (err) {
+        response = {
+            status: false,
+            data: [],
+        };
+    }
+    return response;
+});
+exports.getTop = getTop;

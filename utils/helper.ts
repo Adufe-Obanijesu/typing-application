@@ -19,6 +19,11 @@ interface response {
     status: boolean
 }
 
+interface getTop {
+    difficulty: string
+    number: number
+}
+
 const registerScore = async ({ score, difficulty, user }: props) => {
     const { scores } = user;
 
@@ -72,6 +77,35 @@ const registerScore = async ({ score, difficulty, user }: props) => {
     return response;
 }
 
+const getTop = async ({ difficulty, number }: getTop) => {
+
+    let response = {
+        status: false,
+        data: [],
+    }
+
+    try {
+        const users:any = await User.find({ [`scores.${difficulty}.highScore`]: {$ne: 0} })
+        .select("-password")
+        .sort({ [`scores.${difficulty}.highScore`]: -1 })
+        .limit(number)
+        
+        response = {
+            status: true,
+            data: users,
+        }
+    }
+    catch(err) {
+        response = {
+            status: false,
+            data: [],
+        }
+    }
+
+    return response;
+}
+
 export {
     registerScore,
+    getTop,
 }
