@@ -54,12 +54,16 @@ scoreboard.get("/myPos", checkAuthorization, async (req: AuthenticatedRequest, r
     })
 
 });
+type req = {
+    number: number,
+    difficulty: string
+}
+scoreboard.get("/top", async (req, res) => {
+    const { difficulty, number } = req.query;
 
-scoreboard.get("/top10", checkAuthorization, async (req, res) => {
-    const { difficulty } = req.query;
-    const number = 10;
+    if (typeof(number) !== "string") return;
 
-    const response = await getTop({ difficulty: `${difficulty}`, number });
+    const response = await getTop({ difficulty: `${difficulty}`, number: parseInt(number) });
     
     if (response.status) {
         return res.status(200).json({ scoreboard: response.data }); 
@@ -69,7 +73,7 @@ scoreboard.get("/top10", checkAuthorization, async (req, res) => {
 
 });
 
-scoreboard.get("/all", checkAuthorization, (req, res) => {
+scoreboard.get("/all", (req, res) => {
     const { difficulty } = req.query;
     
     User.find({ [`scores.${difficulty}.highScore`]: {$ne: 0} })

@@ -55,10 +55,11 @@ scoreboard.get("/myPos", checkAuthorization_1.default, (req, res) => __awaiter(v
         return res.status(400).json({ msg: "Error getting scoreboard" });
     });
 }));
-scoreboard.get("/top10", checkAuthorization_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { difficulty } = req.query;
-    const number = 10;
-    const response = yield (0, helper_1.getTop)({ difficulty: `${difficulty}`, number });
+scoreboard.get("/top", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { difficulty, number } = req.query;
+    if (typeof (number) !== "string")
+        return;
+    const response = yield (0, helper_1.getTop)({ difficulty: `${difficulty}`, number: parseInt(number) });
     if (response.status) {
         return res.status(200).json({ scoreboard: response.data });
     }
@@ -66,7 +67,7 @@ scoreboard.get("/top10", checkAuthorization_1.default, (req, res) => __awaiter(v
         return res.status(400).json({ msg: "Error getting scoreboard" });
     }
 }));
-scoreboard.get("/all", checkAuthorization_1.default, (req, res) => {
+scoreboard.get("/all", (req, res) => {
     const { difficulty } = req.query;
     User_1.default.find({ [`scores.${difficulty}.highScore`]: { $ne: 0 } })
         .select("-password")

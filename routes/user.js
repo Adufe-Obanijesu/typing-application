@@ -52,7 +52,7 @@ user.post("/signup", (req, res) => {
             });
             newUser.save()
                 .then((user) => __awaiter(void 0, void 0, void 0, function* () {
-                const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+                const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "730h" });
                 if (!score) {
                     return res.status(200).json({ msg: "User signed up", user, token });
                 }
@@ -79,7 +79,7 @@ user.post("/login", (req, res) => {
             .then((doMatch) => __awaiter(void 0, void 0, void 0, function* () {
             if (!doMatch)
                 return res.status(401).json({ msg: "Invalid email or password" });
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "730h" });
             if (!score) {
                 return res.status(200).json({ msg: "User signed up", user, token });
             }

@@ -31,6 +31,7 @@ const Scoreboard = () => {
             return;
         };
 
+        
         setLoading(true);
 
         const config = {
@@ -57,6 +58,30 @@ const Scoreboard = () => {
         })
     }
 
+    const fetchTop5 = (signal: AbortSignal) => {
+        setLoading(true);
+    
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            signal,
+        }
+        setLoading(true);
+        
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/top?difficulty=${difficulty}&number=5`, config)
+        .then(response => {
+            setResponse(response.data.scoreboard);
+        })
+        .catch(err => {
+            if (!axios.isCancel(err)) {
+                console.error(err);
+                errorNotification("Error fetching scoreboard. Please check your internet connection!");
+            }
+        })
+        .finally(() => setLoading(false));
+    }
+
     const getIndex = useMemo(() => {
         if (response.length > 0 && user) {
             return response.findIndex((eachResponse: any) => eachResponse._id === user._id);
@@ -67,6 +92,12 @@ const Scoreboard = () => {
     useEffect(() => {
         const controller = new AbortController();
         const { signal } = controller;
+
+        if (!user) {
+            fetchTop5(signal);
+            return;
+        }
+
         fetchScoreBoard(signal);
 
         return () => {
@@ -79,9 +110,8 @@ const Scoreboard = () => {
             
             <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xl font-bold mb-2">Scoreboard</h3>
-                {
-                    user && <button className="bg-orange-500 hover:bg-orange-600 p-4 py-1 text-white rounded-lg" onClick={() => setModal(true)}>View</button>
-                }  
+                
+                <button className="bg-orange-500 hover:bg-orange-600 p-4 py-1 text-white rounded-lg" onClick={() => setModal(true)}>View</button>
             </div>
 
             <ul className="flex justify-between">
@@ -97,7 +127,7 @@ const Scoreboard = () => {
                 }
 
                 {
-                    (!user && !loading) && <h4>Please log in</h4>
+                    (!user && !loading) && <h4 className="font-semibold text-md">Please log in to check your position</h4>
                 }
 
                 {
@@ -105,19 +135,24 @@ const Scoreboard = () => {
                 }
 
                 {
-                    (response.length > 0 && !loading && user) && response.map((eachResponse: any, index) => {
-                        let pos;
+                    (response.length > 0 && !loading) && response.map((eachResponse: any, index) => {
+                        // initialize position if fetching top 5 instead of user's position
+                        let pos = index + 1;
 
-                        if (user._id === eachResponse._id) {
-                            pos = position;
-                        } else if (getIndex > index) {
-                            pos = position - (getIndex - index);
-                        } else {
-                            pos = position + (index - getIndex);
-                        }
+                        if (user) {
 
-                        if (user && (user._id === eachResponse._id)) {
-                            return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} isMe />
+                        
+                            if (user._id === eachResponse._id) {
+                                pos = position;
+                            } else if (getIndex > index) {
+                                pos = position - (getIndex - index);
+                            } else {
+                                pos = position + (index - getIndex);
+                            }
+
+                            if (user && (user._id === eachResponse._id)) {
+                                return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} isMe />
+                            }
                         }
                         return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} score={eachResponse.scores[difficulty].highScore} position={pos} />
                     })

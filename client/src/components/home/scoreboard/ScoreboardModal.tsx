@@ -28,19 +28,18 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         setScopedDifficulty(difficulty);
     }, []);
 
-    const fetchTop10 = (token: string, signal: AbortSignal) => {
+    const fetchTop10 = (signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
             signal,
         }
         setLoading(true);
         
-        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/top10?difficulty=${scopedDifficulty}`, config)
+        axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/top?difficulty=${scopedDifficulty}&number=10`, config)
         .then(response => {
             setResponse(response.data.scoreboard);
         })
@@ -53,12 +52,11 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         .finally(() => setLoading(false));
     }
 
-    const fetchAll = (token: string, signal: AbortSignal) => {
+    const fetchAll = (signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
             signal,
@@ -79,6 +77,10 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
     }
 
     const fetchMyPos = (token: string, signal: AbortSignal) => {
+        if (!user) {
+            setResponse([]);
+            return;
+        }
         setLoading(true);
 
         const config = {
@@ -91,6 +93,12 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
 
         axios.get(`${process.env.NEXT_PUBLIC_SERVER}/scoreboard/myPos?difficulty=${scopedDifficulty}&number=${3}`, config)
         .then(response => {
+
+            const findUser = response.data.scoreboard.findIndex((eachUser: any) => eachUser._id === user._id);
+
+            if (findUser < 0) {
+                return;
+            }
             setResponse(response.data.scoreboard);
             setPosition(response.data.position);
         })
@@ -112,22 +120,24 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         const controller = new AbortController();
         const { signal } = controller;
 
-        const token = localStorage.getItem("typingToken");
-
-        if (!token) {
-            return;
-        }
-
         if (nav === "top10") {
-            fetchTop10(token, signal);
+            fetchTop10(signal);
         } else if (nav === "all") {
-            fetchAll(token, signal);
+            fetchAll(signal);
         } else {
+
+            const token = localStorage.getItem("typingToken");
+
+            if (!token) {
+                return;
+            }
+
             fetchMyPos(token, signal);
         }
 
         return () => {
             controller.abort();
+            setResponse([]);
         }
         
     }, [nav, scopedDifficulty]);
@@ -186,12 +196,23 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
                         )
                     }
 
-                    {
-                        (response.length > 0 && user && !loading && nav !== "myPos") && response.map((eachResponse: any, index: number) => {
-                            if (eachResponse._id === user._id) return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[scopedDifficulty].highScore} isMe />
+                     {
+                        (response.length > 0 && !loading && nav !== "myPos") && response.map((eachResponse: any, index: number) => {
+
+                            if (user) {
+                                if (eachResponse._id === user._id) return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[scopedDifficulty].highScore} isMe />
+                            }
                             
                             return <UserScore key={eachResponse._id} name={`${eachResponse.firstName} ${eachResponse.lastName}`} position={index+1} score={eachResponse.scores[scopedDifficulty].highScore} />
                         })
+                    }
+
+                    {
+                        (response.length <= 0 && !loading && !user) && <h4>Please log in</h4> 
+                    }
+
+{
+                        (response.length <= 0 && !loading && user) && <h4>You have no record for level {scopedDifficulty}</h4> 
                     }
 
                     {
