@@ -26,9 +26,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
 
     useEffect(() => {
         setScopedDifficulty(difficulty);
-    }, []);
+    }, [difficulty]);
 
-    const fetchTop10 = (signal: AbortSignal) => {
+    const fetchTop10 = useCallback((signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
@@ -50,9 +50,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             }
         })
         .finally(() => setLoading(false));
-    }
+    }, [scopedDifficulty]);
 
-    const fetchAll = (signal: AbortSignal) => {
+    const fetchAll = useCallback((signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
@@ -74,9 +74,9 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             }
         })
         .finally(() => setLoading(false));
-    }
+    }, [scopedDifficulty]);
 
-    const fetchMyPos = (token: string, signal: AbortSignal) => {
+    const fetchMyPos = useCallback((token: string, signal: AbortSignal) => {
         if (!user) {
             setResponse([]);
             return;
@@ -111,7 +111,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         .finally(() => {
             setLoading(false);
         })
-    }
+    }, [scopedDifficulty, user]);
 
     useEffect(() => {
 
@@ -140,7 +140,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             setResponse([]);
         }
         
-    }, [nav, scopedDifficulty]);
+    }, [nav, fetchAll, fetchMyPos, fetchTop10, scopedDifficulty]);
 
     const dismissModal = () => {
         setModal(false);
@@ -151,7 +151,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
         
     }, 500, { trailing: true, leading: true });
 
-    const mSearchResult = useCallback((value: string) => searchResult(value), []);
+    const mSearchResult = useCallback((value: string) => searchResult(value), [searchResult]);
 
     const searchWord = (value: string) => {
         setSearch(value);
@@ -163,7 +163,7 @@ const ScoreboardModal = ({ setModal }: { setModal: React.Dispatch<React.SetState
             return response.findIndex((eachResponse: any) => eachResponse._id === user._id);
         }
         return -1;
-    }, [response]);
+    }, [response, user]);
 
     return (
         <Modal dismiss={dismissModal}>

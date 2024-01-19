@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from "react";
+import { useContext, useEffect, useState, useMemo, useCallback } from "react";
 import UserScore from "./UserScore";
 
 import axios from "axios"
@@ -21,7 +21,7 @@ const Scoreboard = () => {
     // scoreboard modal
     const [ modal, setModal ] = useState(false);
 
-    const fetchScoreBoard = (signal: AbortSignal) => {
+    const fetchScoreBoard = useCallback((signal: AbortSignal) => {
         
         const allScores = user && user?.scores[difficulty].scores;
         
@@ -56,9 +56,9 @@ const Scoreboard = () => {
         .finally(() => {
             setLoading(false);
         })
-    }
+    }, [difficulty, result, user]);
 
-    const fetchTop5 = (signal: AbortSignal) => {
+    const fetchTop5 = useCallback((signal: AbortSignal) => {
         setLoading(true);
     
         const config = {
@@ -80,14 +80,14 @@ const Scoreboard = () => {
             }
         })
         .finally(() => setLoading(false));
-    }
+    }, [difficulty]);
 
     const getIndex = useMemo(() => {
         if (response.length > 0 && user) {
             return response.findIndex((eachResponse: any) => eachResponse._id === user._id);
         }
         return -1;
-    }, [response]);
+    }, [response, user]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -103,7 +103,7 @@ const Scoreboard = () => {
         return () => {
             controller.abort();
         }
-    }, [difficulty, user]);
+    }, [fetchScoreBoard, fetchTop5, user]);
 
     return (
         <aside className="px-4">

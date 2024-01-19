@@ -32,8 +32,8 @@ const ProgressModal = () => {
     const { user, presets, darkMode } = state;
     const { difficulty } = presets;
 
-    const labels = user?.scores[difficulty].scores.map(score => score.date) || [];
-    const scoreData = user?.scores[difficulty].scores.map(score => score.score) || [];
+    const labels = user?.scores[difficulty].scores.map((score: {date: string, score: number}) => score.date) || [];
+    const scoreData = user?.scores[difficulty].scores.map((score: {date: string, score: number}) => score.score) || [];
 
     const data = {
         labels,

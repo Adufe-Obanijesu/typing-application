@@ -1,7 +1,7 @@
 "use client"
 
 import { faker } from '@faker-js/faker/locale/en';
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef, useCallback, useMemo } from 'react';
 
 // utils
 import { calcWPM, capitalize } from '@/utils/helper';
@@ -37,9 +37,9 @@ const Home = () => {
 
     const [ showResult, setShowResult ] = useState(false);
     
-    const allowedPattern = /^[a-zA-Z0-9!,.?_\- ]$/;
+    const allowedPattern = useMemo(() => /^[a-zA-Z0-9!,.?_\- ]$/, []);
 
-    const reset = () => {
+    const reset = useCallback(() => {
         let newText: string[] = [];
 
         if (difficulty === "easy") {
@@ -62,7 +62,7 @@ const Home = () => {
         setEndTime(0);
         dispatch({ type: "SET_RESULT", payload: -1 });
         setShowResult(false);
-    }
+    }, [difficulty, dispatch, wordNumber]);
 
     const handleFocus = () => {
         setIsFocused(true);
@@ -75,9 +75,9 @@ const Home = () => {
 
     useEffect(() => {
         reset();
-    }, [wordNumber, difficulty]);
+    }, [reset]);
 
-    const handleInput = (e: KeyboardEvent) => {
+    const handleInput = useCallback((e: KeyboardEvent) => {
 
         // test for allowed keys
         if (!allowedPattern.test(e.key)) return;
@@ -110,19 +110,20 @@ const Home = () => {
         }
 
         setPointer(prev => prev + 1);
-    }
+    }, [allowedPattern, dispatch, errPointer, error, pointer, startTime, text]);
 
     useEffect(() => {
-        typingContainer.current?.addEventListener("keypress", handleInput);
+        const typingEl = typingContainer.current;
+        typingEl?.addEventListener("keypress", handleInput);
 
         if (result > -1) {
-            typingContainer.current?.removeEventListener("keypress", handleInput);
+            typingEl?.removeEventListener("keypress", handleInput);
         }
 
         return () => {
-            typingContainer.current?.removeEventListener("keypress", handleInput);
+            typingEl?.removeEventListener("keypress", handleInput);
         }
-    }, [text, pointer, errPointer, startTime, endTime, result]);
+    }, [result, handleInput]);
 
     useEffect(() => {
         typingContainer.current?.focus();

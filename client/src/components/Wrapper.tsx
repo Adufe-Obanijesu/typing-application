@@ -39,7 +39,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         dispatch({ type: "SET_LOGIN", payload: true });
       })
 
-    }, []);
+    }, [user]);
 
     const getPresets = useCallback(() => {
       if (!localStorage.getItem("typingMode")) {
@@ -68,11 +68,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       verifyToken();
       hasRendered.current = true;
 
-    }, []);
+    }, [verifyToken]);
 
     useEffect(() => {
       getPresets();
-    }, []);
+    }, [getPresets]);
 
     const closeNavDropDown = () => {
       dispatch({ type: "SET_DROPDOWN", payload: false });

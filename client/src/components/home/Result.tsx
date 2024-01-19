@@ -3,7 +3,7 @@
 import { StateContext } from "@/contexts/state";
 import { errorNotification } from "@/utils/notifications";
 import axios from "axios";
-import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
+import React, { useContext, useEffect, useState, useRef, useMemo, useCallback } from "react";
 import Modal from "../Modal";
 import { ClipLoader } from "react-spinners";
 import { override, overrideLight } from "@/utils/cliploader";
@@ -34,7 +34,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
         }
     }
 
-    const registerScore = () => {
+    const registerScore = useCallback(() => {
 
         if (user) {
             setLoading(true);
@@ -60,7 +60,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
                 setLoading(false);
             })
         }
-    }
+    }, [difficulty, dispatch, result, user]);
 
     
     useEffect(() => {
@@ -69,7 +69,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
         registerScore();
         hasRendered.current = true;
 
-    }, []);
+    }, [registerScore]);
 
     const dismissModal = () => {
         if (!loading) {

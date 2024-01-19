@@ -2,8 +2,6 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 
-import { login, logout } from "@/components/Sidebar";
-
 // Icons
 import { FiMoon, FiSun } from "react-icons/fi";
 import { FaRegKeyboard } from "react-icons/fa";
@@ -73,7 +71,7 @@ const Navbar = () => {
         music.currentTime = 0;
       }
     };
-  }, [audio, song]);
+  }, [audio, song, handleVisibilityChange, pauseMusic, playMusic]);
 
     const changeMode = () => {
         localStorage.setItem("typingMode", `${!darkMode}`);
@@ -104,7 +102,7 @@ const Navbar = () => {
       dispatch({ type: "SET_VIEW_PROGRESS", payload: true });
     }
 
-    const navDropdown = e => {
+    const navDropdown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.stopPropagation();
       dispatch({ type: "SET_DROPDOWN", payload: !dropdown });
     }
