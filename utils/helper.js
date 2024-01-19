@@ -17,8 +17,12 @@ const User_1 = __importDefault(require("../models/User"));
 const registerScore = ({ score, difficulty, user }) => __awaiter(void 0, void 0, void 0, function* () {
     const { scores } = user;
     let updatedUser;
+    const date = new Date();
     const newScores = scores[difficulty].scores;
-    newScores.push(score);
+    newScores.push({
+        score,
+        date: date.toDateString(),
+    });
     if (score > scores[difficulty].highScore) {
         updatedUser = {
             scores: Object.assign(Object.assign({}, scores), { [difficulty]: {

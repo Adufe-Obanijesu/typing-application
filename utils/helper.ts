@@ -28,9 +28,14 @@ const registerScore = async ({ score, difficulty, user }: props) => {
     const { scores } = user;
 
     let updatedUser : undefined | updatedUser;
+
+    const date = new Date();
     
     const newScores = scores[difficulty].scores;
-    newScores.push(score);
+    newScores.push({
+        score,
+        date: date.toDateString(),
+    });
     if (score > scores[difficulty].highScore) {
         updatedUser = {
             scores: {

@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+// import { faker } from '@faker-js/faker/locale/en';
 
 // component
 import Modal from "./Modal";
@@ -26,7 +27,6 @@ interface props {
 }
 
 // func is any extra function you will like to run
-
 const Signup = ({ func }: props) => {
 
     const { state, dispatch } = useContext(StateContext);
@@ -41,6 +41,52 @@ const Signup = ({ func }: props) => {
     } : {}
 
     const [ userDetails, setUserDetails ] = useState(initialState as userDetails);
+
+    // const addMany = () => {
+    //     const firstName = faker.word.words(1);
+    //     const lastName = faker.word.words(1);
+    //     const email = `${firstName}${lastName}@gmail.com`;
+    //     const password = `${firstName}123`;
+
+    //     const userDetails = {
+    //         firstName,
+    //         lastName,
+    //         email,
+    //         password,
+    //     }
+
+    //     if (userDetails.password.length < 6) {
+    //         errorNotification("Password can not be less than 6 characters");
+    //         return;
+    //     }
+
+    //     const config = {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         }
+    //     }
+
+    //     axios.post(`${process.env.NEXT_PUBLIC_SERVER}/user/signup`, userDetails, config)
+    //     .then((response: any) => {
+            
+    //         // console.log("User signed up successfully");
+    //         localStorage.setItem("typingToken", response.data.token);
+    //         dispatch({ type: "SET_USER", payload: response.data.user });
+    //         if (func) {
+    //             func();
+    //         }
+
+    //         dispatch({ type: "SHOW_SIGNUP", payload: false });
+
+    //     })
+    //     .catch(err => {
+    //         errorNotification(err.response?.data ? err.response.data.msg : "Error signing you up. Please check your network and try again.");
+    //         console.log(err);
+    //     })
+    //     .finally(() => {
+    //         setLoading(false);
+    //     });
+    // }
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUser = {

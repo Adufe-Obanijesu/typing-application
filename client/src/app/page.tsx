@@ -148,7 +148,7 @@ const Home = () => {
                 {
                 text.map((letter, index) => {
                     
-                    return <span key={letter + index} className={`ml-[3px] font-semibold text-lg border-slate-400 ${letter === " " && "px-[2px]"} ${index === pointer && "text-orange-500 border-b"} ${index < pointer && "text-slate-400"}`}>{letter}</span>;
+                    return <span key={letter + index} className={`ml-[3px] font-semibold lg:text-lg border-slate-400 ${letter === " " && "px-[2px]"} ${index === pointer && "text-orange-500 border-b"} ${index < pointer && "text-slate-400"}`}>{letter}</span>;
                 })
                 }
 

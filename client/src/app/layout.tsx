@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 
 import './globals.css';
 
+// icon
+import { FaRegKeyboard } from "react-icons/fa"
+import { RxCaretLeft } from "react-icons/rx"
 
 import Navbar from '@/components/Navbar';
 import Wrapper from '@/components/Wrapper';
@@ -23,10 +26,19 @@ export default function RootLayout({
       <body>
 
           <Wrapper>
-            <div className="px-8 flex flex-col gap-4 h-full">
+            <div className="relative h-screen px-6 block md:hidden">
+              <div className="absolute top-0 left-0 ml-6">
+                  <FaRegKeyboard className="text-4xl" />
+                </div>
+              <div className="hv-center h-full">
+                <h3 className="font-semibold text-2xl">This screen size is not supported. Please move to a bigger screen</h3>
+              </div>
+            </div>
+            
+            <div className="hidden md:block px-8 flex flex-col gap-4 h-full">
               <Navbar />
-              <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-2">
+              <div className="grid lg:grid-cols-12 gap-4">
+                <div className="col-span-2 lg:block hidden">
                   <Sidebar />
                 </div>
                 <div className="col-span-10">

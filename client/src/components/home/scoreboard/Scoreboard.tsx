@@ -109,7 +109,7 @@ const Scoreboard = () => {
         <aside className="px-4">
             
             <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-bold mb-2">Scoreboard</h3>
+                <h3 className="lg:text-xl text-md font-bold">Scoreboard</h3>
                 
                 <button className="bg-orange-500 hover:bg-orange-600 p-4 py-1 text-white rounded-lg" onClick={() => setModal(true)}>View</button>
             </div>

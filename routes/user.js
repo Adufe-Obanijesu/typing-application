@@ -53,7 +53,7 @@ user.post("/signup", (req, res) => {
             newUser.save()
                 .then((user) => __awaiter(void 0, void 0, void 0, function* () {
                 const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "730h" });
-                if (!score) {
+                if (!score || score < 0) {
                     return res.status(200).json({ msg: "User signed up", user, token });
                 }
                 if (!difficulty)
@@ -107,5 +107,10 @@ user.get("/checkToken", checkAuthorization_1.default, (req, res) => {
         res.status(401).json({ msg: "User unauthorized" });
     }
     return res.status(200).json({ msg: "User authorized", user: req.user });
+});
+user.delete("/all", (req, res) => {
+    User_1.default.deleteMany({})
+        .then(() => res.status(200).json({ msg: "Deleted successfully" }))
+        .catch(err => res.status(400).json({ msg: err }));
 });
 exports.default = user;

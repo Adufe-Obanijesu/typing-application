@@ -46,10 +46,10 @@ user.post("/signup", (req, res) => {
             .then(async (user) => {
                 const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, { expiresIn: "730h" });
 
-                if (!score) {
+                if (!score || score < 0) {
                     return res.status(200).json({ msg: "User signed up", user, token });
                 }
-    
+                
                 if (!difficulty) return res.status(400).json({ msg: "Difficulty not specified", token });
                 const updateScore = await registerScore({ score, difficulty, user });
                 
@@ -112,6 +112,12 @@ user.get("/checkToken", checkAuthorization, (req: AuthenticatedRequest, res) => 
     }
     
     return res.status(200).json({ msg: "User authorized", user: req.user });
+})
+
+user.delete("/all", (req, res) => {
+    User.deleteMany({})
+    .then(() => res.status(200).json({ msg: "Deleted successfully" }))
+    .catch(err => res.status(400).json({ msg: err }));
 })
 
 export default user;
