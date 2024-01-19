@@ -26,9 +26,9 @@ import {
 import Modal from "./Modal";
 import { StateContext } from "@/contexts/state";
 
-const ProgressModal = ({ setProgressModal }: { setProgressModal: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const ProgressModal = () => {
 
-    const { state } = useContext(StateContext);
+    const { state, dispatch } = useContext(StateContext);
     const { user, presets, darkMode } = state;
     const { difficulty } = presets;
 
@@ -61,7 +61,7 @@ const ProgressModal = ({ setProgressModal }: { setProgressModal: React.Dispatch<
     };
 
     const dismiss = ()  => {
-        setProgressModal(false);
+      dispatch({ type: "SET_VIEW_PROGRESS", payload: false });
     }
 
     return (

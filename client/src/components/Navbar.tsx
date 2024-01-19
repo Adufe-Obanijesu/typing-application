@@ -2,20 +2,26 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 
+import { login, logout } from "@/components/Sidebar";
+
 // Icons
 import { FiMoon, FiSun } from "react-icons/fi";
 import { FaRegKeyboard } from "react-icons/fa";
 import { RxSpeakerLoud } from "react-icons/rx";
-import { RxSpeakerOff } from "react-icons/rx";
+import { RxSpeakerOff, RxCaretDown } from "react-icons/rx";
 import { HiOutlineUserCircle } from "react-icons/hi";
+import { BiLogOut, BiLogIn } from "react-icons/bi";
+import { FaChartLine } from "react-icons/fa";
 
 import { StateContext } from "@/contexts/state";
+
+import { successNotification } from "@/utils/notifications";
 
 
 const Navbar = () => {
 
     const { state, dispatch } = useContext(StateContext);
-    const { darkMode, user, song } = state;
+    const { darkMode, user, song, dropdown } = state;
 
     const [ audio, setAudio ] = useState(false);
 
@@ -84,8 +90,27 @@ const Navbar = () => {
         dispatch({ type: "SET_SONG", payload: e.target.value });
     }
 
+    const logout = () => {
+      localStorage.removeItem("typingToken");
+      dispatch({ type: "SET_USER", payload: null });
+      successNotification("You are logged out");
+    }
+
+    const login = () => {
+      dispatch({ type: "SHOW_LOGIN", payload: true });
+    }
+
+    const viewProgressModal = () => {
+      dispatch({ type: "SET_VIEW_PROGRESS", payload: true });
+    }
+
+    const navDropdown = e => {
+      e.stopPropagation();
+      dispatch({ type: "SET_DROPDOWN", payload: !dropdown });
+    }
+
     return (
-        <nav className="mb-4">
+        <nav className="mb-4 relative">
             <div className="flex justify-between items-center py-2">
                 <div>
                     <FaRegKeyboard className="text-4xl" />
@@ -126,10 +151,44 @@ const Navbar = () => {
                     <div>
                         
                             {
-                             user ? <div className="bg-orange-500 hv-center w-10 h-10 rounded-full">
-                                    <div className="text-lg font-semibold uppercase text-white">{user.firstName[0]}{user.lastName[0]}</div>
-                                    </div> : <HiOutlineUserCircle className="inline cursor-pointer text-2xl" />
+                             user ? <div className="bg-orange-500 cursor-pointer hv-center py-1 px-3 rounded-full" onClick={navDropdown}>
+                                
+                                    <div className="text-lg font-semibold uppercase text-white v-center gap-1">
+                                      <span>{user.firstName[0]}{user.lastName[0]}</span>
+                                      <span>
+                                        <RxCaretDown className="inline text-xl" />
+                                      </span>
+                                    </div>
+                                    </div> : <div className="hv-center cursor-pointer py-1 px-3 rounded-full" onClick={navDropdown}>
+                                      <span>
+                                        <HiOutlineUserCircle className="inline font-bold cursor-pointer text-2xl" />
+                                      </span>
+                                      <span>
+                                        <RxCaretDown className="inline text-xl" />
+                                      </span>
+                                    </div>
                             }
+
+                        {
+                          dropdown && (
+                            <div className={`absolute top-12 right-0 rounded-lg ${darkMode ? "secondaryDarkBg" : "secondaryLightBg"} shadow`}>
+
+                              {
+                                user && (        
+                                <div className="px-4 hover:bg-orange-500 transitionItem">
+                                      <button className="py-2 rounded w-full flex items-center gap-2" onClick={viewProgressModal}><FaChartLine className="inline text-lg" /> My Progress</button>
+                                  </div>
+                                )
+                              }
+                                
+                                <div className="hover:bg-orange-500 transitionItem px-4">
+                                  {
+                                      user ? <button className="py-2 rounded w-full flex items-center gap-2" onClick={logout}><BiLogOut className="inline text-lg" /> Log out</button> : <button className="py-2 rounded w-full flex items-center gap-2" onClick={login}><BiLogIn className="inline text-lg" /> Log in</button>
+                                  }
+                                </div>
+                            </div>
+                          )
+                        }
                         
                     </div>
                     

@@ -9,14 +9,10 @@ import { BiLogOut, BiLogIn } from "react-icons/bi";
 import { FaChartLine } from "react-icons/fa";
 
 
-import ProgressModal from "./ProgressModal";
-
 const Sidebar = () => {
 
     const { state, dispatch } = useContext(StateContext);
     const { user } = state;
-
-    const [ progressModal, setProgressModal ] = useState(false);
 
     const logoutRef = useRef<HTMLButtonElement>(null);
     const loginRef = useRef<HTMLButtonElement>(null);
@@ -34,8 +30,8 @@ const Sidebar = () => {
         loginRef.current?.blur();
     }
 
-    const viewProgress = () => {
-        setProgressModal(true);
+    const viewProgressModal = () => {
+        dispatch({ type: "SET_VIEW_PROGRESS", payload: true });
         chartRef.current?.blur();
     }
 
@@ -48,7 +44,7 @@ const Sidebar = () => {
                         {
                             user && (
                                 <div className="mb-2">
-                                    <button ref={chartRef} className="bg-orange-500 hover:bg-orange-600 transitionItem px-4 py-2 rounded w-full text-slate-50 flex items-center justify-center gap-2" onClick={viewProgress}><FaChartLine className="inline text-lg" /> My Progress</button>
+                                    <button ref={chartRef} className="bg-orange-500 hover:bg-orange-600 transitionItem px-4 py-2 rounded w-full text-slate-50 flex items-center justify-center gap-2" onClick={viewProgressModal}><FaChartLine className="inline text-lg" /> My Progress</button>
                                 </div>
                             )
                         }
@@ -62,11 +58,9 @@ const Sidebar = () => {
                 </div>
 
             </aside>
-            {
-                progressModal && <ProgressModal setProgressModal={setProgressModal} />
-            }
         </section>
     );
 }
+
 
 export default Sidebar;

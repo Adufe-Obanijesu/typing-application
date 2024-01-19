@@ -12,13 +12,14 @@ import Signup from '@/components/Signup';
 import Settings from '@/components/home/Settings';
 import { StateContext } from '@/contexts/state';
 import Login from '@/components/Login';
+import ProgressModal from '@/components/ProgressModal';
 import Scoreboard from '@/components/home/scoreboard/Scoreboard';
 
 const Home = () => {
 
     const { state, dispatch } = useContext(StateContext);
 
-    const { showLogin, showSignup, presets } = state;
+    const { showLogin, showSignup, presets, viewProgress } = state;
     const { wordNumber, difficulty, error, result } = presets;
 
     const typingContainer = useRef<HTMLDivElement>(null);
@@ -167,7 +168,7 @@ const Home = () => {
         </div>
         
         {
-        showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
+            showResult && <Result charCount={text.length} reset={reset} setShowResult={setShowResult} />
         }
 
         {
@@ -176,6 +177,10 @@ const Home = () => {
 
         {
             showLogin && <Login func={reset} />
+        }
+
+        {
+            viewProgress && <ProgressModal />
         }
         
         <div className="col-span-3">

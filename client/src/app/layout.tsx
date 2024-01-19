@@ -4,7 +4,6 @@ import './globals.css';
 
 // icon
 import { FaRegKeyboard } from "react-icons/fa"
-import { RxCaretLeft } from "react-icons/rx"
 
 import Navbar from '@/components/Navbar';
 import Wrapper from '@/components/Wrapper';

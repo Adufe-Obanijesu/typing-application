@@ -4,6 +4,8 @@ type stateType = {
     showLogin: boolean
     user: any
     song: string
+    viewProgress: boolean
+    dropdown: boolean
     presets: {
         wordNumber: 20 | 30 | 40 | 50 | 60
         difficulty: "easy" | "medium" | "hard"
@@ -23,6 +25,8 @@ const initialState: stateType = {
     showLogin: false,
     user: null,
     song: "music 1",
+    viewProgress: false,
+    dropdown: false,
     presets: {
         wordNumber: 20,
         difficulty: "easy",
@@ -108,11 +112,25 @@ const stateReducer = (state: stateType, action: actionType) => {
                 return resultState;
 
         case "SET_USER":
-            const user = {
+            const userState = {
                 ...state,
                 user: action.payload,
             }
-            return user;
+            return userState;
+
+        case "SET_VIEW_PROGRESS":
+            const progressState = {
+                ...state,
+                viewProgress: action.payload,
+            }
+            return progressState;
+        
+        case "SET_DROPDOWN":
+            const dropdownState = {
+                ...state,
+                dropdown: action.payload,
+            }
+            return dropdownState;
 
         default: return state;
     }

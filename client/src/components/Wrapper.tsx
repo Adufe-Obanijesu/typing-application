@@ -74,13 +74,17 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       getPresets();
     }, []);
 
+    const closeNavDropDown = () => {
+      dispatch({ type: "SET_DROPDOWN", payload: false });
+    }
+
     return (
         <StateContext.Provider value={{
             state,
             dispatch
           }}>
 
-            <main className={`overflow-hidden relative py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"} min-h-screen`}>
+            <main className={`overflow-hidden relative py-4 min-h-screen transitionItem dark:bg-slate-900 dark:text-slate-300 ${darkMode ? "darkBg darkText" : "lightBg lightText"} min-h-screen`} onClick={closeNavDropDown}>
                 
                 {children}
             
