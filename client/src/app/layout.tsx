@@ -29,13 +29,13 @@ export default function RootLayout({
             </div>
             <div className="hv-center h-full">
               <h3 className="font-semibold text-2xl">
-                This screen size is not supported. Please move to a bigger
+                This screen size is not supported. Please visit on a larger
                 screen
               </h3>
             </div>
           </div>
 
-          <div className="hidden md:block px-8 flex flex-col gap-4 h-full">
+          <div className="hidden md:flex px-8 flex-col gap-4 h-full">
             <Navbar />
             <div className="grid lg:grid-cols-12 gap-4">
               <div className="col-span-2 lg:block hidden">

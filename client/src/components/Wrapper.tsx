@@ -51,16 +51,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     }
 
     const typingMode = localStorage.getItem("typingMode");
-    const typingSong = localStorage.getItem("typingSong");
 
     if (typingMode === "true") {
       dispatch({ type: "SET_MODE", payload: true });
     } else {
       dispatch({ type: "SET_MODE", payload: false });
-    }
-
-    if (typingSong) {
-      dispatch({ type: "SET_SONG", payload: typingSong });
     }
   }, []);
 

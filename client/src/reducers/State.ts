@@ -3,7 +3,6 @@ type stateType = {
   showSignup: boolean;
   showLogin: boolean;
   user: any;
-  song: string;
   viewProgress: boolean;
   dropdown: boolean;
   UIloaded: boolean;
@@ -25,7 +24,6 @@ const initialState: stateType = {
   showSignup: false,
   showLogin: false,
   user: null,
-  song: "music 1",
   viewProgress: false,
   dropdown: false,
   UIloaded: false,
@@ -69,13 +67,6 @@ const stateReducer = (state: stateType, action: actionType) => {
         darkMode: action.payload,
       };
       return modeState;
-
-    case "SET_SONG":
-      const songState = {
-        ...state,
-        song: action.payload,
-      };
-      return songState;
 
     case "SET_DIFFICULTY":
       const difficultyState = {

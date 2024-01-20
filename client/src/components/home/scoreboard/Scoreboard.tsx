@@ -26,6 +26,7 @@ const Scoreboard = () => {
   const [response, setResponse] = useState([]);
   const [position, setPosition] = useState(-1);
   const [loading, setLoading] = useState(true);
+  const [prevDifficulty, setPrevDifficulty] = useState("");
 
   // scoreboard modal
   const [modal, setModal] = useState(false);
@@ -38,12 +39,14 @@ const Scoreboard = () => {
       if (
         !user ||
         result > 0 ||
-        allScores[allScores.length - 1]?.score !==
-          user?.scores[difficulty]?.highScore
+        (prevDifficulty == difficulty && allScores[allScores.length - 1]?.score !==
+          user?.scores[difficulty]?.highScore)
       ) {
         setLoading(false);
         return;
       }
+
+      setPrevDifficulty(difficulty);
 
       setLoading(true);
 

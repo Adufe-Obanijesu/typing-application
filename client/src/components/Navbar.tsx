@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 // Icons
 import { FiMoon, FiSun } from "react-icons/fi";
@@ -15,45 +15,59 @@ import { StateContext } from "@/contexts/state";
 
 import { successNotification } from "@/utils/notifications";
 
+
 const Navbar = () => {
   const { state, dispatch } = useContext(StateContext);
-  const { darkMode, user, song, dropdown } = state;
+  const { darkMode, user, dropdown } = state;
+
+  const [ song, setSong ] = useState("music 1");
+  const [ prevSong, setPrevSong ] = useState("music 1");
 
   const [audio, setAudio] = useState(false);
+  const [music, setMusic] = useState<any>(null);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
+  
+  const playMusic = useCallback(() => {
+    if ((prevSong != song) || (!music && song)) {
+      // Create the music instance if it doesn't exist
+      let musicEl = new Audio(`/music/${song}.mp3`);
+      musicEl.loop = true;
+      setMusic(musicEl);
+      setPrevSong(song);
+    }
 
-  let music: HTMLAudioElement; // Declare music outside the useEffect to have a single instance
+    // Check if it's paused before playing to avoid restarting if it's already playing
+    if (music?.paused && audio) {
+      music.play();
+    }
+  }, [song, audio, music]);
+  
+  const pauseMusic = useCallback(() => {
+    if (music && !music?.paused) {
+      // Pause the music if it's playing
+      music.pause();
+    }
+  }, [music]);
 
-  const handleVisibilityChange = () => {
+  const handleVisibilityChange = useCallback(() => {
     if (document.visibilityState === "visible" && audio) {
       playMusic();
     } else if (document.visibilityState === "hidden") {
       pauseMusic();
     }
-  };
-
-  const playMusic = () => {
-    if (!music && song) {
-      // Create the music instance if it doesn't exist
-      music = new Audio(`/music/${song}.mp3`);
-      music.loop = true;
-    }
-    // Check if it's paused before playing to avoid restarting if it's already playing
-    if (music.paused && audio) {
-      music.play();
-    }
-  };
-
-  const pauseMusic = () => {
-    if (music && !music.paused) {
-      // Pause the music if it's playing
-      music.pause();
-    }
-  };
+  }, [audio, playMusic, pauseMusic]);
 
   useEffect(() => {
-    playMusic();
+    const savedSong = localStorage.getItem("typingSong");
+    if (!savedSong) return;
+    setSong(savedSong);
+  }, []);
+
+  useEffect(() => {
+    if (audio) {
+      playMusic();
+    }
 
     // Attach event listener for visibility change
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -62,12 +76,12 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       // Pause and reset the music when the component unmounts
-      if (music && !music.paused) {
+      if (music && !music?.paused) {
         pauseMusic();
         music.currentTime = 0;
       }
     };
-  }, [audio, song, handleVisibilityChange, pauseMusic, playMusic]);
+  }, [audio, song, handleVisibilityChange, pauseMusic, playMusic, music]);
 
   const changeMode = () => {
     localStorage.setItem("typingMode", `${!darkMode}`);
@@ -79,9 +93,9 @@ const Navbar = () => {
     setAudio(!audio);
   };
 
-  const changeMusicPreset = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    localStorage.setItem("typingSong", e.target.value);
-    dispatch({ type: "SET_SONG", payload: e.target.value });
+  const changeMusicPreset = (song: string) => {
+    localStorage.setItem("typingSong", song);
+    setSong(song);
   };
 
   const logout = () => {
@@ -114,7 +128,7 @@ const Navbar = () => {
           <div>
             <select
               className="focus:outline-none cursor-pointer bg-transparent"
-              onChange={changeMusicPreset}
+              onChange={(e) => changeMusicPreset(e.target.value)}
               value={song}
             >
               <option
