@@ -34,10 +34,9 @@ const Scoreboard = () => {
   const fetchScoreBoard = useCallback(
     (signal: AbortSignal) => {
       const allScores = user && user?.scores[difficulty].scores;
-
+      hasFetchedTop5.current = false;
       // we need to check the last one before the current score to check if higher
       if (
-        !user ||
         result > 0 ||
         (prevDifficulty == difficulty && allScores[allScores.length - 1]?.score !==
           user?.scores[difficulty]?.highScore)
@@ -129,7 +128,7 @@ const Scoreboard = () => {
       );
     }
     return -1;
-  }, [response]);
+  }, [response, user]);
 
   useEffect(() => {
     const controller = new AbortController();

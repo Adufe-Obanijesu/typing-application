@@ -26,7 +26,7 @@ scoreboard.get("/myPos", checkAuthorization_1.default, (req, res) => __awaiter(v
     const number = parseInt(`${queryNumber}`);
     const { user } = req;
     const score = user === null || user === void 0 ? void 0 : user.scores[`${difficulty}`].highScore;
-    if (score === 0) {
+    if (score == 0) {
         const users = yield (0, helper_1.getTop)({
             difficulty: `${difficulty}`,
             number: 5,

@@ -41,7 +41,7 @@ const Navbar = () => {
     if (music?.paused && audio) {
       music.play();
     }
-  }, [song, audio, music]);
+  }, [song, audio, music, prevSong]);
   
   const pauseMusic = useCallback(() => {
     if (music && !music?.paused) {

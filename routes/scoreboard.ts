@@ -21,13 +21,12 @@ scoreboard.get(
     const { user } = req;
 
     const score = user?.scores[`${difficulty}`].highScore;
-
-    if (score === 0) {
+    
+    if (score == 0) {
       const users: any = await getTop({
         difficulty: `${difficulty}`,
         number: 5,
       });
-
       return res.status(200).json({ scoreboard: users.data, position: 0 });
     }
 
