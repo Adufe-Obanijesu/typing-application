@@ -16,7 +16,6 @@ const express_1 = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 dotenv.config();
 const User_1 = __importDefault(require("../models/User"));
 const helper_1 = require("../utils/helper");

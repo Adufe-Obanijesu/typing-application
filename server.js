@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
 // importing routes
 const user_1 = __importDefault(require("./routes/user"));
 const mongoose_1 = __importDefault(require("mongoose"));
@@ -18,7 +20,7 @@ app.use("/user", user_1.default);
 app.use("/scoreboard", scoreboard_1.default);
 // connecting to database
 mongoose_1.default
-    .connect("mongodb+srv://Obanijesu:Bdognom123!@cluster0.nzjrd6x.mongodb.net/typing")
+    .connect(`${process.env.MONGO_URI}`)
     .then(() => console.log("MongoDB Connected..."))
     .catch((err) => console.log(err));
 const port = process.env.PORT || 5000;

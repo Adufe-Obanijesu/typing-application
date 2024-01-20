@@ -2,7 +2,6 @@ import { Router } from "express";
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 dotenv.config();
 
 import User from "../models/User";

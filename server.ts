@@ -2,6 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 const cors = require("cors");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 // importing routes
 import user from "./routes/user";
 import mongoose from "mongoose";
@@ -21,7 +24,7 @@ app.use("/scoreboard", scoreboard);
 // connecting to database
 mongoose
   .connect(
-    "mongodb+srv://Obanijesu:Bdognom123!@cluster0.nzjrd6x.mongodb.net/typing",
+    `${process.env.MONGO_URI}`,
   )
   .then(() => console.log("MongoDB Connected..."))
   .catch((err) => console.log(err));
