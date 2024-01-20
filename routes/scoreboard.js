@@ -27,25 +27,51 @@ scoreboard.get("/myPos", checkAuthorization_1.default, (req, res) => __awaiter(v
     const { user } = req;
     const score = user === null || user === void 0 ? void 0 : user.scores[`${difficulty}`].highScore;
     if (score === 0) {
-        const users = yield (0, helper_1.getTop)({ difficulty: `${difficulty}`, number: 5 });
+        const users = yield (0, helper_1.getTop)({
+            difficulty: `${difficulty}`,
+            number: 5,
+        });
         return res.status(200).json({ scoreboard: users.data, position: 0 });
     }
-    User_1.default.countDocuments({ [`scores.${difficulty}.highScore`]: { $gt: score }, _id: { $ne: user === null || user === void 0 ? void 0 : user._id } })
-        .then(result => {
-        User_1.default.find({ $and: [{ [`scores.${difficulty}.highScore`]: { $gt: score, $ne: 0 } }, { _id: { $ne: user === null || user === void 0 ? void 0 : user._id } }] })
+    User_1.default.countDocuments({
+        [`scores.${difficulty}.highScore`]: { $gt: score },
+        _id: { $ne: user === null || user === void 0 ? void 0 : user._id },
+    })
+        .then((result) => {
+        User_1.default.find({
+            $and: [
+                { [`scores.${difficulty}.highScore`]: { $gt: score, $ne: 0 } },
+                { _id: { $ne: user === null || user === void 0 ? void 0 : user._id } },
+            ],
+        })
             .select("-password")
             .sort({ [`scores.${difficulty}.highScore`]: 1 })
             .limit(number)
             .then((gtScores) => {
-            User_1.default.find({ $and: [{ [`scores.${difficulty}.highScore`]: { $lte: score, $ne: 0 } }, { _id: { $ne: user === null || user === void 0 ? void 0 : user._id } }] })
+            User_1.default.find({
+                $and: [
+                    { [`scores.${difficulty}.highScore`]: { $lte: score, $ne: 0 } },
+                    { _id: { $ne: user === null || user === void 0 ? void 0 : user._id } },
+                ],
+            })
                 .select("-password")
                 .sort({ [`scores.${difficulty}.highScore`]: -1 })
                 .limit(number + (number - gtScores.length))
-                .then(lteScores => {
+                .then((lteScores) => {
                 if ((user === null || user === void 0 ? void 0 : user.scores[`${difficulty}`].highScore) <= 0) {
-                    return res.status(200).json({ scoreboard: [...gtScores.reverse(), ...lteScores], position: result + 1 });
+                    return res
+                        .status(200)
+                        .json({
+                        scoreboard: [...gtScores.reverse(), ...lteScores],
+                        position: result + 1,
+                    });
                 }
-                return res.status(200).json({ scoreboard: [...gtScores.reverse(), user, ...lteScores], position: result + 1 });
+                return res
+                    .status(200)
+                    .json({
+                    scoreboard: [...gtScores.reverse(), user, ...lteScores],
+                    position: result + 1,
+                });
             })
                 .catch(() => res.status(400).json({ msg: "Error getting scoreboard" }));
         })
@@ -57,9 +83,12 @@ scoreboard.get("/myPos", checkAuthorization_1.default, (req, res) => __awaiter(v
 }));
 scoreboard.get("/top", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { difficulty, number } = req.query;
-    if (typeof (number) !== "string")
+    if (typeof number !== "string")
         return;
-    const response = yield (0, helper_1.getTop)({ difficulty: `${difficulty}`, number: parseInt(number) });
+    const response = yield (0, helper_1.getTop)({
+        difficulty: `${difficulty}`,
+        number: parseInt(number),
+    });
     if (response.status) {
         return res.status(200).json({ scoreboard: response.data });
     }

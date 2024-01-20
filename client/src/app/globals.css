@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
   font-family: "quicksand";
   src: url("/fonts/Quicksand-VariableFont_wght.ttf");
@@ -28,31 +27,31 @@
 }
 
 .darkText {
-  @apply text-slate-300; 
+  @apply text-slate-300;
 }
 
 .darkBg {
-  @apply bg-slate-900; 
+  @apply bg-slate-900;
 }
 
 .secondaryDarkBg {
-  @apply bg-slate-800; 
+  @apply bg-slate-800;
 }
 
 .lightText {
   @apply text-slate-800;
 }
 
-.lightBg{
+.lightBg {
   @apply bg-slate-50;
 }
 
-.secondaryLightBg{
+.secondaryLightBg {
   @apply bg-slate-100;
 }
 
 body {
-@apply font-quicksand;
+  @apply font-quicksand;
 }
 
 .transitionItem {
@@ -63,7 +62,8 @@ button {
   @apply cursor-pointer transitionItem;
 }
 
-button, svg {
+button,
+svg {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -79,6 +79,13 @@ button, svg {
   @apply flex justify-center items-center;
 }
 
-p, span, h1, h2, h3, h4, h5, h6 {
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   @apply transitionItem;
 }

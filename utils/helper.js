@@ -28,12 +28,12 @@ const registerScore = ({ score, difficulty, user }) => __awaiter(void 0, void 0,
             scores: Object.assign(Object.assign({}, scores), { [difficulty]: {
                     highScore: score,
                     scores: newScores,
-                } })
+                } }),
         };
     }
     else {
         updatedUser = {
-            scores: Object.assign(Object.assign({}, scores), { [difficulty]: Object.assign(Object.assign({}, scores[difficulty]), { scores: newScores }) })
+            scores: Object.assign(Object.assign({}, scores), { [difficulty]: Object.assign(Object.assign({}, scores[difficulty]), { scores: newScores }) }),
         };
     }
     let response = {
@@ -63,7 +63,9 @@ const getTop = ({ difficulty, number }) => __awaiter(void 0, void 0, void 0, fun
         data: [],
     };
     try {
-        const users = yield User_1.default.find({ [`scores.${difficulty}.highScore`]: { $ne: 0 } })
+        const users = yield User_1.default.find({
+            [`scores.${difficulty}.highScore`]: { $ne: 0 },
+        })
             .select("-password")
             .sort({ [`scores.${difficulty}.highScore`]: -1 })
             .limit(number);

@@ -18,15 +18,13 @@ app.use(bodyParser.json());
 app.use("/user", user);
 app.use("/scoreboard", scoreboard);
 
-app.get("/", checkAuthorization, (req, res) => {
-    console.log("got here");
-    res.send("This is working");
-})
-
 // connecting to database
-mongoose.connect("mongodb+srv://Obanijesu:Bdognom123!@cluster0.nzjrd6x.mongodb.net/typing")
-.then(() => console.log("MongoDB Connected..."))
-.catch((err) => console.log(err));
+mongoose
+  .connect(
+    "mongodb+srv://Obanijesu:Bdognom123!@cluster0.nzjrd6x.mongodb.net/typing",
+  )
+  .then(() => console.log("MongoDB Connected..."))
+  .catch((err) => console.log(err));
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server has started at port ${port}`));

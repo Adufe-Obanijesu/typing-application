@@ -25,7 +25,7 @@ const checkAuthorization = (req, res, next) => {
             req.user = user;
             next();
         })
-            .catch(err => res.status(400).json({ msg: "Error authorizing user", err }));
+            .catch((err) => res.status(400).json({ msg: "Error authorizing user", err }));
     });
 };
 exports.default = checkAuthorization;
