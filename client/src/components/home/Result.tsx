@@ -88,7 +88,7 @@ const Result = ({ charCount, reset, setShowResult }: props) => {
   return (
     <Modal dismiss={dismissModal}>
       <div
-        className={`z-10 relative md:rounded-2xl md:shadow-lg md:px-16 px-8 py-12 lg:w-1/3 md:w-2/3 h-full md:h-auto ${darkMode ? "secondaryDarkBg" : "secondaryLightBg"}`}
+        className={`z-10 relative md:rounded-2xl md:shadow-lg md:px-12 px-8 py-12 lg:w-1/3 md:w-2/3 h-full md:h-auto ${darkMode ? "secondaryDarkBg" : "secondaryLightBg"}`}
       >
         <div className="flex flex-col justify-between md:block h-full">
           <div>
