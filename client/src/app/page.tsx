@@ -21,6 +21,7 @@ import { StateContext } from "@/contexts/state";
 import Login from "@/components/Login";
 import ProgressModal from "@/components/ProgressModal";
 import Scoreboard from "@/components/home/scoreboard/Scoreboard";
+import Disclaimer from "@/components/Disclaimer";
 
 const Home = () => {
   const { state, dispatch } = useContext(StateContext);
@@ -36,6 +37,7 @@ const Home = () => {
   const [text, setText] = useState<string[]>([]);
   const [pointer, setPointer] = useState(0);
   const [errPointer, setErrPointer] = useState(-1);
+  const [shouldShow, setShouldShow] = useState<"true" | "false">("false");
 
   // Tracking time
   const [startTime, setStartTime] = useState(0);
@@ -74,6 +76,20 @@ const Home = () => {
   const handleBlur = () => {
     setIsFocused(false);
   };
+
+    useEffect(() => {
+        const disclaimerDismissed = localStorage.getItem('disclaimerDismissed');
+        let timeout: NodeJS.Timeout
+        if (disclaimerDismissed === "false") {
+           timeout = setTimeout(() => setShouldShow("true"), 2000)
+        }
+
+        return () => {
+          if (timeout) {
+            clearTimeout(timeout)
+          }
+        }
+    }, []);
 
   useEffect(() => {
     dispatch({ type: "SET_UI_LOADED", payload: true });
@@ -189,6 +205,10 @@ const Home = () => {
       <div className="col-span-3">
         <Scoreboard />
       </div>
+
+      {
+        shouldShow === "true" && <Disclaimer setShouldShow={setShouldShow} />
+      }
     </section>
   );
 };
